@@ -25,7 +25,7 @@ function HeroSection() {
           style={{ backgroundColor: "transparent" }}
         />
         <button
-          className="bg-orange-500 text-white px-6 py-3 rounded-lg hover:bg-orange-600 transition"
+          className="bg-[#FF7401] text-white px-6 py-3 rounded-lg hover:bg-orange-600 transition"
         >
           Get Started
         </button>
@@ -35,7 +35,7 @@ function HeroSection() {
       <div className="flex gap-6 mt-8">
         {/* Request Food */}
         <button
-          className="flex items-center gap-2 border-2 border-dashed border-orange-500 px-6 py-3 rounded-lg text-orange-500 hover:bg-orange-500 hover:text-white transition"
+          className="flex items-center gap-2 border-2 border-dashed border-orange-500 px-6 py-3 rounded-lg text-[#FF7401] hover:bg-[#FF7401] hover:text-white transition"
         >
           <FaCalendarAlt />
           Request Food
@@ -43,7 +43,7 @@ function HeroSection() {
 
         {/* Donate Food */}
         <button
-          className="flex items-center gap-2 border-2 border-dashed border-orange-500 px-6 py-3 rounded-lg text-orange-500 hover:bg-orange-500 hover:text-white transition"
+          className="flex items-center gap-2 border-2 border-dashed border-orange-500 px-6 py-3 rounded-lg text-[#FF7401] hover:bg-[#FF7401] hover:text-white transition"
         >
           <FaHandHoldingHeart />
           Donate Food

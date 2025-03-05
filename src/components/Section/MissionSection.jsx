@@ -77,7 +77,7 @@ const MissionSection = () => {
   return (
     <div className="text-white py-16 px-4">
       {/* Section Title */}
-      <h2 className="text-center text-3xl sm:text-4xl font-bold text-orange-500">
+      <h2 className="text-center text-3xl sm:text-4xl font-bold text-[#FF7401]">
         Way to fulfill our mission!
       </h2>
       <p className="text-center text-gray-300 mt-2 sm:mt-3 ">
