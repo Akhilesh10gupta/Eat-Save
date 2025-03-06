@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Menu, X } from "lucide-react";
 import logo from '../../assets/logo.png' 
+import { Link } from "react-router-dom";
 
 function Nav() {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -22,7 +23,7 @@ function Nav() {
             {/* Desktop Buttons */}
             <div className="hidden md:flex space-x-4">
               <button className="bg-[#FFFFFF] text-orange-500 px-4 py-2 rounded-lg font-semibold transition duration-300 hover:bg-gray-200 active:bg-gray-300">
-                Sign In
+              <Link to="../Signin" className="text-lg font-semibold">Sign In</Link>
               </button>
               <button className="bg-[#FF7401] text-white px-4 py-2 rounded-lg font-semibold transition duration-300 hover:bg-orange-600 active:bg-orange-700">
                 Sign Up
