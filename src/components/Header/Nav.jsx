@@ -17,7 +17,9 @@ function Nav() {
               <div className="">
               <img className="h-10 w-10 mr-2 cursor-pointer" src={logo} alt="logo" />
               </div>
+              <Link to="/" className="text-lg font-semibold">
               <span className="text-orange-500 font-bold text-xl">Eat Save</span>
+              </Link>
             </div>
 
             {/* Desktop Buttons */}
