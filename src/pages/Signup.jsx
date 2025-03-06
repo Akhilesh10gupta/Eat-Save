@@ -70,7 +70,7 @@ function Signup() {
 
             {/* Continue with Email Button */}
             <div className='mx-7'>
-              <button className="w-full flex items-center justify-center gap-2 bg-black text-white py-3 rounded-lg font-semibold hover:bg-gray-800 transition">
+              <button className="w-full flex items-center justify-center gap-2 border border-gray-300 py-3 rounded-lg mt-4 font-semibold hover:bg-gray-100 transition">
                 <FaEnvelope className="text-lg" /> Continue With Email
               </button>
             </div>

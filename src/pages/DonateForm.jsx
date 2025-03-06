@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import Nav from "../components/Header/Nav";
+import Nav2 from "../components/Header/Nav2";
 import Heading from "../components/Header/Heading";
 import Footer from "../components/Footer/Footer";
 import { FaSearch, FaCalendarAlt, FaUpload } from "react-icons/fa";
@@ -13,7 +13,7 @@ function DonationForm() {
     <>
       <Heading />
       <div className="bg-gradient-to-t from-[#030711] via-[#050D1E] to-[#0A1A3C] min-h-screen flex flex-col">
-        <Nav />
+        <Nav2 />
 
         {/* Page Title */}
         <div className="text-left mt-10 px-6 sm:px-10 md:px-20">

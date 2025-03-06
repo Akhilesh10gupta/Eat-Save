@@ -20,7 +20,7 @@ function Signin() {
 
         {/* Sign In Container */}
         <div className="flex flex-grow items-center justify-center py-10 px-10 pb-24">
-          <div className="bg-white shadow-lg rounded-2xl p-6 sm:p-8 w-full max-w-md">
+          <div className="bg-white shadow-lg rounded-xl p-6 sm:p-8 w-full max-w-md">
             {/* Sign In Title */}
             <h2 className="text-center text-xl sm:text-2xl font-bold text-[#E87730] mb-6">
               Sign In
@@ -60,7 +60,7 @@ function Signin() {
 
             {/* Continue with Email Button */}
             <div className='mx-7'>
-              <button className="w-full flex items-center justify-center gap-2 bg-black text-white py-3 rounded-lg font-semibold hover:bg-gray-800 transition">
+              <button className="w-full flex items-center justify-center gap-2 border border-gray-300 py-3 rounded-lg mt-4 font-semibold hover:bg-gray-100 transition">
                 <FaEnvelope className="text-lg" /> Continue With Email
               </button>
             </div>
