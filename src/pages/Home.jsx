@@ -4,7 +4,9 @@ import Nav from '../components/Header/Nav'
 import HeroSection from '../components/Section/HeroSection'
 import MissionSection from '../components/Section/MissionSection'
 import GraphSection from '../components/Section/GraphSection'
-import Graphtrail from '../components/Section/Graphtrail'
+import HelpSection from '../components/Section/HelpSection'
+import Footer from '../components/Footer/Footer'
+
 
 function Home() {
   return (
@@ -16,7 +18,8 @@ function Home() {
         <HeroSection />
         <MissionSection/>
         <GraphSection />
-        
+        <HelpSection />
+        <Footer />
       </div>
     </>
   )
