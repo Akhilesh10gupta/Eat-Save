@@ -1,6 +1,8 @@
 import React from "react";
 import { FaCalendarAlt } from "react-icons/fa";
 import { FaHandHoldingHeart } from "react-icons/fa";
+import { Link } from "react-router-dom";
+
 
 function HeroSection() {
   return (
@@ -46,7 +48,7 @@ function HeroSection() {
           className="flex items-center gap-2 border-2 border-dashed border-orange-500 px-6 py-3 rounded-lg text-[#FF7401] hover:bg-[#FF7401] hover:text-white transition"
         >
           <FaHandHoldingHeart />
-          Donate Food
+          <Link to="/DonateForm" className="text-lg font-semibold">Donate Food</Link>
         </button>
       </div>
     </section>

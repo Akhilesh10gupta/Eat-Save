@@ -4,6 +4,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 import Home from "./pages/Home"
 import Signin from './pages/Signin';
 import Signup from './pages/Signup';
+import DonationForm from './pages/DonateForm';
 
 function App() {
   return (
@@ -12,6 +13,7 @@ function App() {
         <Route path='/' element={<Home />} />
         <Route path="/signin" element={<Signin />} /> {/* Define Signin route */}
         <Route path="/signup" element={<Signup />} />
+        <Route path="/DonateForm" element={<DonationForm />} />
         
         {/* Add other pages here, without Heading */}
       </Routes>
