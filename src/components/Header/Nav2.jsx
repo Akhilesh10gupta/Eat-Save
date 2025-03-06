@@ -43,7 +43,7 @@ function Nav2() {
 
       {/* Full-Screen Mobile Menu */}
       {menuOpen && (
-        <div className="fixed inset-0 bg-[#0B1734] flex flex-col justify-center items-center z-50">
+        <div className="fixed inset-0 bg-transparent backdrop-blur-lg flex flex-col justify-center items-center z-50">
           <button
             className="absolute top-4 right-4 text-white"
             onClick={() => setMenuOpen(false)}
@@ -51,13 +51,13 @@ function Nav2() {
             <X size={32} />
           </button>
           <Link
-            to="/home"
+            to="/"
             className="text-orange-500 font-semibold text-xl mb-4"
             onClick={() => setMenuOpen(false)}
           >
             Home
           </Link>
-          <Link to="/profile" onClick={() => setMenuOpen(false)}>
+          <Link to="/home" onClick={() => setMenuOpen(false)}>
             <div className="h-12 w-12 bg-orange-500 rounded-full flex items-center justify-center">
               <span className="text-white text-2xl">👤</span>
             </div>
