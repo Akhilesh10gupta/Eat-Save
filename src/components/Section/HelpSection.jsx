@@ -1,7 +1,7 @@
 import React from "react";
 
-// Import images manually (if using local images)
-// import sandwichImg from "../../assets/sandwich.png";
+
+import homefood from "../../assets/homefood.jpg";
 // import thaliImg from "../../assets/thali.png";
 // import eggBreakfastImg from "../../assets/egg_breakfast.png";
 // import rollsImg from "../../assets/rolls_puffs.png";
@@ -35,7 +35,7 @@ function HelpSection() {
         </h3>
         <div className="flex flex-wrap justify-center gap-8 mt-5">
           {[
-            { name: "Home-cooked Meals", img: "" },
+            { name: "Home-cooked Meals", img: homefood },
             { name: "Restaurant Surplus Food", img: "" },
             { name: "Packed Meals", img: "" },
             { name: "Fresh Produce", img: "" },
