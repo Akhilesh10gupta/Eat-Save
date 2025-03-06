@@ -8,7 +8,7 @@ function Footer() {
       
       {/* Meals Donated */}
       <div className="text-m font-bold mt-4 md:mt-0 ml-auto" style={{ textAlign: "right" }}>
-          Total Meals Donated: <span className="text-white text-lg">13342 +</span>
+          Total Meals Donated: <span className="text-black text-lg">13342 +</span>
         </div>
 
     <div className="bg-[#E87730] text-white  flex flex-col items-center">
