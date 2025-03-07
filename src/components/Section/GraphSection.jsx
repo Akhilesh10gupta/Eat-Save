@@ -2,10 +2,10 @@ import React from "react";
 import { PieChart } from "@mui/x-charts/PieChart";
 
 const pieData = [
-  { label: "35%", value: 35, color: "#E67E22" }, // Orange
-  { label: "20%", value: 20, color: "#2ECC71" }, // Green
-  { label: "15%", value: 15, color: "#F4D03F" }, // Yellow
-  { label: "30%", value: 30, color: "#FFFFFF" }, // White
+  { label: "Overproduction & Overserving", value: 35, color: "#E67E22" }, // Orange
+  { label: "Improper Storage", value: 20, color: "#2ECC71" }, // Green
+  { label: "Expiration & Best-Before Dates", value: 15, color: "#F4D03F" }, // Yellow
+  { label: "Aesthetic Standards & Rejection", value: 30, color: "#FFFFFF" }, // White
 ];
 
 function GraphSection() {

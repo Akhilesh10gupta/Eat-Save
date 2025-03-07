@@ -29,7 +29,7 @@ function HeroSection() {
         <button
           className="bg-[#FF7401] text-white px-6 py-3 rounded-lg hover:bg-orange-600 transition"
         >
-          Get Started
+         <Link to="/Home2" className="text-lg font-semibold">Get Started</Link>
         </button>
       </div>
 

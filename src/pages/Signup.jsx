@@ -14,7 +14,7 @@ function Signup() {
 
         {/* Welcome Text Section */}
         <div className="text-left mt-10 px-6 sm:px-10 md:px-20">
-          <h1 className="text-white text-xl sm:text-2xl font-bold">Welcome To Eat Save</h1>
+          <h1 className="text-white text-xl sm:text-2xl font-bold">Welcome To Extra Bite</h1>
           <div className="w-full border-t-2 border-[#E87730] mt-1"></div>
         </div>
 

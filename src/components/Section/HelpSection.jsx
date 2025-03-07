@@ -2,11 +2,12 @@ import React from "react";
 
 
 import homefood from "../../assets/homefood.jpg";
-// import thaliImg from "../../assets/thali.png";
-// import eggBreakfastImg from "../../assets/egg_breakfast.png";
-// import rollsImg from "../../assets/rolls_puffs.png";
-// import saladImg from "../../assets/salad.png";
-// import biryaniImg from "../../assets/biryani.png";
+import resturent from "../../assets/resturent.jpeg";
+import packed from "../../assets/packed.jpg";
+import fresh from "../../assets/fresh.png";
+import healthy from "../../assets/healthy.png";
+import special from "../../assets/special.png";
+
 
 import newYorkImg from "../../assets/newyork.png";
 import malaysiaImg from "../../assets/malaysia.png";
@@ -17,7 +18,7 @@ import indiaImg from "../../assets/india.png";
 
 function HelpSection() {
   return (
-    <div className="bg-transparent text-white py-10 px-5 flex flex-col items-center">
+    <div className="bg-transparent text-white py-10 px-5 flex flex-col items-center mt-20">
       {/* Header Section */}
       <div className="text-center">
         <h2 className="text-3xl font-bold text-[#FF7401]">
@@ -36,11 +37,11 @@ function HelpSection() {
         <div className="flex flex-wrap justify-center gap-8 mt-5">
           {[
             { name: "Home-cooked Meals", img: homefood },
-            { name: "Restaurant Surplus Food", img: "" },
-            { name: "Packed Meals", img: "" },
-            { name: "Fresh Produce", img: "" },
-            { name: "Healthy Meals", img: "" },
-            { name: "Special Meals", img: "" },
+            { name: "Restaurant Surplus Food", img: resturent },
+            { name: "Packed Meals", img: packed },
+            { name: "Fresh Produce", img: fresh },
+            { name: "Healthy Meals", img: healthy },
+            { name: "Special Meals", img: special },
           ].map((item, index) => (
             <div key={index} className="flex flex-col items-center">
               <div className="w-24 h-24 rounded-full bg-gray-700 flex items-center justify-center overflow-hidden">

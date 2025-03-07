@@ -30,8 +30,8 @@ export default function BasicBars() {
       xAxis={[{ scaleType: "band", data: data.map((d) => d.year) }]}
       sx={{
         "& .MuiChartsAxis-root line": { stroke: "white" },
-        "& .MuiChartsAxis-tickLabel": { fill: "yellow" },
-        "& .MuiChartsBar-root text": { fill: "wert" },
+        "& .MuiChartsAxis-tickLabel": { fill: "white !important" },
+        "& .MuiChartsBar-root text": { fill: "white !important" },
       }}
       width={600}
       height={400}

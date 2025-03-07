@@ -1,6 +1,6 @@
 import React from "react";
 import { FaFacebookF, FaInstagram, FaTwitter } from "react-icons/fa";
-import logo from '../../assets/logo.png' 
+import logo from '../../assets/logo2.png' 
 
 function Footer() {
   return (
@@ -18,7 +18,7 @@ function Footer() {
         <div className="text-xl font-bold flex items-center">
           <span className="text-2xl mr-2"><img className="h-10 w-10 mr-2 cursor-pointer" src={logo} alt="logo" />
             </span> {/* logo  */}
-          Eat Save
+          Extra Bite
         </div>
 
         {/* Navigation Links */}

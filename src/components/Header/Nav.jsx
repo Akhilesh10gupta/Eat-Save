@@ -9,7 +9,7 @@ function Nav() {
   return (
     <>
       {/* Navbar */}
-      <nav className="sticky top-0 z-50 py-4 bg-transparent p-4 flex justify-between items-center w-full border-neutral-700/80 shadow-md backdrop-blur-md">
+      <nav className="sticky top-0 z-50 py-4 bg-transparent p-6 flex justify-between items-center w-full border-neutral-700/80 shadow-md backdrop-blur-md">
         <div className="container px-4 mx-auto relative">
           <div className="flex justify-between items-center">
             {/* Logo and Title */}
@@ -18,7 +18,7 @@ function Nav() {
               <img className="h-10 w-10 mr-2 cursor-pointer" src={logo} alt="logo" />
               </div>
               <Link to="/" className="text-lg font-semibold">
-              <span className="text-orange-500 font-bold text-xl">Eat Save</span>
+              <span className="text-orange-500 font-bold text-2xl">Extra Bite</span>
               </Link>
             </div>
 
@@ -50,10 +50,10 @@ function Nav() {
 
           {/* Mobile Menu Buttons */}
           <button className="bg-[#FFFFFF] text-orange-500 px-3 py-2 rounded-md font-semibold text-lg mb-4 w-1/2 transition duration-300 hover:bg-gray-200 active:bg-gray-300">
-            Sign In
+          <Link to="/Signin" className="text-lg font-semibold">Sign In</Link>
           </button>
           <button className="bg-[#FF7401] text-white px-3 py-2 rounded-md font-semibold text-lg w-1/2 transition duration-300 hover:bg-orange-600 active:bg-orange-700">
-            Sign Up
+          <Link to="/Signup" className="text-lg font-semibold">Sign Up</Link>
           </button>
         </div>
       )}
