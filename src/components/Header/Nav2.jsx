@@ -21,7 +21,7 @@ function Nav2() {
 
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center space-x-6">
-            <Link to="/home" className="text-orange-500 font-semibold text-lg">
+            <Link to="/" className="text-orange-500 font-semibold text-lg">
               Home
             </Link>
             <Link to="/profile">
