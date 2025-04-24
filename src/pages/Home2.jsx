@@ -3,6 +3,7 @@ import Nav2 from '../components/Header/Nav2'
 import Heading from '../components/Header/Heading'
 import HeroSection2 from '../components/Section/HeroSection2'
 import AvailableFoodSection from '../components/Section/AvailableFoodSection'
+import Footer from '../components/Footer/Footer'
 
 function Home2() {
   return (
@@ -13,6 +14,7 @@ function Home2() {
         <Nav2/>
         <HeroSection2/>
         <AvailableFoodSection/>
+        <Footer/>
         </div>
     </>
   )

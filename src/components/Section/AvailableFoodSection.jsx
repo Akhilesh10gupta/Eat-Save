@@ -110,6 +110,36 @@ function AvailableFoodSection() {
       </div>
 
 
+          {/* Donors Around You Section */}
+        <div className="text-center mt-20">
+          <h2 className="text-start text-orange-500 text-lg font-semibold mb-6">Donors around you</h2>
+          <div className="flex flex-wrap justify-center gap-10">
+            {/* Donor Card */}
+            {[
+              { name: "Donor 1", rating: 4, img: "https://i.imgur.com/lycRrzf.png" },
+              { name: "Donor 2", rating: 3, img: "https://i.imgur.com/PLLP7qO.png" },
+              { name: "Donor 3", rating: 5, img: "https://i.imgur.com/3ZON5Ow.png" },
+              { name: "Donor 4", rating: 4, img: "https://i.imgur.com/LR4OAhE.png" },
+              { name: "Donor 4", rating: 3, img: "https://i.imgur.com/LKXNudR.png" },
+              { name: "Donor 5", rating: 2, img: "https://i.imgur.com/L1BZB3u.png" },
+            ].map((donor, idx) => (
+              <div key={idx} className="flex flex-col items-center">
+                <img
+                  src={donor.img}
+                  alt={donor.name}
+                  className="w-28 h-28 rounded-full object-cover mb-2 border-4 border-white shadow-md"
+                />
+                <p className="text-white font-medium">{donor.name}</p>
+                <div className="text-yellow-400 text-lg">
+                  {Array(donor.rating).fill("★").join("")}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+
+
     </div>
   );
 }
