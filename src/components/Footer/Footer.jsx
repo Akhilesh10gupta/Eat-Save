@@ -1,5 +1,6 @@
 import React from "react";
 import { FaFacebookF, FaInstagram, FaTwitter } from "react-icons/fa";
+import { Link } from 'react-router-dom';
 import logo from '../../assets/logo2.png' 
 
 function Footer() {
@@ -23,18 +24,18 @@ function Footer() {
 
         {/* Navigation Links */}
         <div className="flex space-x-6 text-sm mt-4 md:mt-0">
-          <a href="#" className="hover:underline">
-            About us
-          </a>
-          <a href="#" className="hover:underline">
+          <Link to="/about" className="hover:underline">
+            About Us
+          </Link>
+          <Link to="/source" className="hover:underline">
             Source
-          </a>
-          <a href="#" className="hover:underline">
-            Help & Support
-          </a>
-          <a href="#" className="hover:underline">
+          </Link>
+          <Link to="/ContactHelpForm" className=" hover:underline">
+            Contact & Help
+          </Link>
+          <Link to="/terms" className="hover:underline">
             T&C
-          </a>
+          </Link>
         </div>
         {/* Contact Info */}
         <div className="text-sm font-semibold " style={{ }}>

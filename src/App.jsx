@@ -7,6 +7,7 @@ import Signup from './pages/Signup';
 import DonationForm from './pages/DonateForm';
 import Home2 from './pages/Home2';
 import RequestForm from "./pages/RequestForm";
+import ContactHelpForm from "./pages/ContactHelpForm";
 
 function App() {
   return (
@@ -18,6 +19,7 @@ function App() {
         <Route path="/DonateForm" element={<DonationForm />} />
         <Route path="/Home2" element={<Home2 />} />
         <Route path="/RequestForm" element={<RequestForm />} />
+        <Route path="/ContactHelpForm" element={<ContactHelpForm />} />
         
         {/* Add other pages here, without Heading */}
       </Routes>
