@@ -40,7 +40,7 @@ function HeroSection() {
           className="flex items-center gap-2 border-2 border-dashed border-orange-500 px-6 py-3 rounded-lg text-[#FF7401] hover:bg-[#FF7401] hover:text-white transition"
         >
           <FaCalendarAlt />
-          Request Food
+          <Link to="/RequestForm" className="text-lg font-semibold">Request Food</Link>
         </button>
 
         {/* Donate Food */}
