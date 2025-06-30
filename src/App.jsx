@@ -10,6 +10,7 @@ import RequestForm from "./pages/RequestForm";
 import ContactHelpForm from "./pages/ContactHelpForm";
 import Profile from "./pages/Profile";
 import ForgotPassword from './pages/ForgotPassword';
+import UserDirectory from './pages/UserDirectory';
 function App() {
   return (
     <Router>
@@ -23,6 +24,7 @@ function App() {
         <Route path="/ContactHelpForm" element={<ContactHelpForm />} />
         <Route path="/Profile" element={<Profile />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
+        <Route path="/UserDirectory" element={<UserDirectory />} />
 
         {/* Add other pages here, without Heading */}
       </Routes>

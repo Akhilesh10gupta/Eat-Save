@@ -6,7 +6,7 @@ import MissionSection from '../components/Section/MissionSection'
 import GraphSection from '../components/Section/GraphSection'
 import HelpSection from '../components/Section/HelpSection'
 import Footer from '../components/Footer/Footer'
-import Graphtrail from '../components/Section/Graphtrail'
+
 
 
 function Home() {

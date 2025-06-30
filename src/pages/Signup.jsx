@@ -14,11 +14,11 @@ function Signup() {
     email: '',
     password: '',
     location: '',
-    role: 'DONOR',
+    role: 'USER', // Default role
   });
 
   useEffect(() => {
-    wakeBackend(); // wake API if onRender is sleeping
+    wakeBackend(); // Wake up Render backend if sleeping
   }, []);
 
   const handleChange = (e) => {
@@ -31,14 +31,11 @@ function Signup() {
     try {
       const res = await registerUser(formData);
 
-      // ✅ Save token and role to localStorage
+      // Save token and role to localStorage
       localStorage.setItem('token', res.accessToken);
       localStorage.setItem('role', res.role);
 
-      // ✅ Show success alert
       alert(res.message || 'Registration successful!');
-
-      // ✅ Navigate to /home2
       navigate('/home2');
     } catch (err) {
       console.error(err);
@@ -125,6 +122,23 @@ function Signup() {
                 required
                 className="w-full border border-gray-300 rounded-lg p-3 mb-4 outline-none"
               />
+            </div>
+
+            {/* 🔽 Role Selector */}
+            <div className="mx-7 mb-4">
+              <select
+                name="role"
+                value={formData.role}
+                onChange={handleChange}
+                required
+                className="w-full border border-gray-300 rounded-lg p-3 outline-none bg-white"
+              >
+                <option value="USER">User</option>
+                <option value="DONOR">Donor</option>
+                <option value="RECEIVER">Receiver</option>
+                
+                
+              </select>
             </div>
 
             <div className="mx-7">

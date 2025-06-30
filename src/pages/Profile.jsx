@@ -2,8 +2,8 @@ import React, { useEffect, useState } from 'react';
 import Heading from '../components/Header/Heading';
 import Footer from '../components/Footer/Footer';
 import Nav2 from '../components/Header/Nav2';
-import { FaEnvelope, FaUser, FaPhone, FaMapMarkerAlt } from "react-icons/fa";
-import { getUserProfile, updateUserProfile } from '../util/api'; // ✅ Imported from api.js
+import { getUserProfile, updateUserProfile } from '../util/api';
+import { resetPassword } from '../util/api'; // ✅ Make sure this is defined in your API
 
 function EditProfile() {
   const [profile, setProfile] = useState({
@@ -17,7 +17,14 @@ function EditProfile() {
     profileActive: true,
   });
 
-  // 🔁 Fetch user profile on load
+  const [passwordData, setPasswordData] = useState({
+    oldPassword: '',
+    newPassword: '',
+    showOldPassword: false,
+    showNewPassword: false,
+  });
+
+  // Fetch user profile
   useEffect(() => {
     const fetchProfile = async () => {
       try {
@@ -30,7 +37,7 @@ function EditProfile() {
           address: data.userData?.address || '',
           alternateContact: data.userData?.alternateContact || '',
           displayPictureUrl: data.userData?.displayPictureUrl || '',
-          profileActive: data.profileActive
+          profileActive: data.profileActive,
         });
       } catch (err) {
         console.error('❌ Failed to fetch profile:', err);
@@ -41,11 +48,25 @@ function EditProfile() {
     fetchProfile();
   }, []);
 
+  // Input Change Handlers
   const handleChange = (e) => {
     const { name, value } = e.target;
     setProfile((prev) => ({ ...prev, [name]: value }));
   };
 
+  const handlePasswordChange = (e) => {
+    const { name, value } = e.target;
+    setPasswordData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const toggleVisibility = (field) => {
+    setPasswordData((prev) => ({
+      ...prev,
+      [field]: !prev[field],
+    }));
+  };
+
+  // Update profile
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
@@ -56,7 +77,7 @@ function EditProfile() {
         address: profile.address,
         alternateContact: profile.alternateContact,
         displayPictureUrl: profile.displayPictureUrl,
-        profileActive: profile.profileActive
+        profileActive: profile.profileActive,
       };
 
       await updateUserProfile(updateData);
@@ -67,120 +88,156 @@ function EditProfile() {
     }
   };
 
+  // Change password
+  const handlePasswordSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const body = {
+        email: profile.email,
+        contactNumber: profile.contactNumber,
+        newPassword: passwordData.newPassword,
+      };
+      await resetPassword(body);
+      alert('✅ Password updated successfully!');
+      setPasswordData({
+        oldPassword: '',
+        newPassword: '',
+        showOldPassword: false,
+        showNewPassword: false,
+      });
+    } catch (err) {
+      console.error('❌ Failed to change password:', err);
+      alert('Failed to change password. Please try again.');
+    }
+  };
+
   return (
     <>
       <Heading />
-      <div className="bg-gradient-to-t from-[#030711] via-[#050D1E] to-[#0A1A3C] min-h-screen flex flex-col">
+      <div className="bg-gradient-to-t from-[#030711] via-[#050D1E] to-[#0A1A3C] min-h-screen flex flex-col justify-between">
+
         <Nav2 />
         <div className="text-left mt-10 px-6 sm:px-10 md:px-20">
           <h1 className="text-white text-xl sm:text-2xl font-bold">Edit Your Profile</h1>
           <div className="w-full border-t-2 border-[#E87730] mt-1"></div>
         </div>
 
-        <form onSubmit={handleSubmit} className="flex flex-grow items-center justify-center py-10 px-10 pb-24">
-          <div className="bg-white shadow-lg rounded-xl p-6 sm:p-8 w-full max-w-md">
-            <h2 className="text-center text-xl sm:text-2xl font-bold text-[#E87730] mb-6">Profile Information</h2>
-
-            {/* Full Name */}
-            <div className="flex items-center border border-gray-300 rounded-lg p-3 mb-4 mx-7">
-              <FaUser className="mr-2 text-gray-500" />
-              <input
-                type="text"
-                name="fullName"
-                value={profile.fullName}
-                onChange={handleChange}
-                placeholder="Full Name"
-                className="w-full outline-none bg-transparent text-sm sm:text-base"
-              />
-            </div>
-
-            {/* Email (read-only) */}
-            <div className="flex items-center border border-gray-300 rounded-lg p-3 mb-4 mx-7">
-              <FaEnvelope className="mr-2 text-gray-500" />
-              <input
-                type="email"
-                name="email"
-                value={profile.email}
-                readOnly
-                placeholder="Email"
-                className="w-full outline-none bg-transparent text-sm sm:text-base"
-              />
-            </div>
-
-            {/* Phone */}
-            <div className="flex items-center border border-gray-300 rounded-lg p-3 mb-4 mx-7">
-              <FaPhone className="mr-2 text-gray-500" />
-              <span className="mr-2">+91</span>
-              <input
-                type="text"
-                name="contactNumber"
-                value={profile.contactNumber}
-                onChange={handleChange}
-                placeholder="Phone Number"
-                className="w-full outline-none bg-transparent text-sm sm:text-base"
-              />
-            </div>
-
-            {/* Location */}
-            <div className="flex items-center border border-gray-300 rounded-lg p-3 mb-4 mx-7">
-              <FaMapMarkerAlt className="mr-2 text-gray-500" />
-              <input
-                type="text"
-                name="location"
-                value={profile.location}
-                onChange={handleChange}
-                placeholder="Location"
-                className="w-full outline-none bg-transparent text-sm sm:text-base"
-              />
-            </div>
-
-            {/* Address */}
-            <div className="flex items-center border border-gray-300 rounded-lg p-3 mb-4 mx-7">
-              <FaMapMarkerAlt className="mr-2 text-gray-500" />
-              <input
-                type="text"
-                name="address"
-                value={profile.address}
-                onChange={handleChange}
-                placeholder="Address"
-                className="w-full outline-none bg-transparent text-sm sm:text-base"
-              />
-            </div>
-
-            {/* Alternate Contact */}
-            <div className="flex items-center border border-gray-300 rounded-lg p-3 mb-4 mx-7">
-              <FaPhone className="mr-2 text-gray-500" />
-              <input
-                type="text"
-                name="alternateContact"
-                value={profile.alternateContact}
-                onChange={handleChange}
-                placeholder="Alternate Contact"
-                className="w-full outline-none bg-transparent text-sm sm:text-base"
-              />
-            </div>
-
-            {/* Display Picture URL */}
-            <div className="flex items-center border border-gray-300 rounded-lg p-3 mb-4 mx-7">
-              <FaUser className="mr-2 text-gray-500" />
-              <input
-                type="text"
-                name="displayPictureUrl"
-                value={profile.displayPictureUrl}
-                onChange={handleChange}
-                placeholder="Display Picture URL"
-                className="w-full outline-none bg-transparent text-sm sm:text-base"
-              />
-            </div>
-
-            {/* Submit Button */}
-            <div className="mx-7 mt-4">
-              <button type="submit" className="bg-[#FF7401] text-white w-full py-3 rounded-lg font-semibold hover:bg-orange-600 transition">
-                Save Changes
-              </button>
+        <div className="flex flex-col md:flex-row items-start justify-center gap-10 px-10 py-12">
+          {/* Left Panel – Profile Preview */}
+          <div className="bg-white shadow-md rounded-xl p-6 w-full md:w-1/3 text-center">
+            <img
+              src={profile.displayPictureUrl || 'https://i.pravatar.cc/150?img=12'}
+              alt="Profile"
+              className="w-32 h-32 object-cover rounded-full mx-auto mb-4"
+            />
+            <h2 className="text-xl font-bold">{profile.fullName}</h2>
+            <p className="text-gray-500">{profile.email}</p>
+            <p className="text-gray-500">📞 +91 {profile.contactNumber}</p>
+            <p className="text-gray-500">📍 {profile.location}</p>
+            <div className="mt-4">
+              <span className="text-sm text-gray-600">SMS alerts activation</span>
+              <div className="inline-block ml-2 w-3 h-3 bg-green-500 rounded-full"></div>
             </div>
           </div>
-        </form>
+
+          {/* Right Panel – Side-by-side Forms */}
+          <div className="w-full md:w-2/3 flex flex-col lg:flex-row gap-6">
+            {/* Update Profile Form */}
+            <form onSubmit={handleSubmit} className="bg-white shadow-lg rounded-xl p-6 flex-1">
+              <h2 className="text-xl sm:text-2xl font-bold text-[#E87730] mb-6 text-center">Update Details</h2>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <input
+                  type="text"
+                  name="fullName"
+                  placeholder="Full Name"
+                  value={profile.fullName}
+                  onChange={handleChange}
+                  className="border border-gray-300 rounded-lg p-3 outline-none"
+                />
+                <input
+                  type="email"
+                  name="email"
+                  placeholder="Email"
+                  value={profile.email}
+                  readOnly
+                  className="border border-gray-300 rounded-lg p-3 outline-none bg-gray-100 cursor-not-allowed"
+                />
+                <input
+                  type="text"
+                  name="contactNumber"
+                  placeholder="Phone Number"
+                  value={profile.contactNumber}
+                  onChange={handleChange}
+                  className="border border-gray-300 rounded-lg p-3 outline-none"
+                />
+                <input
+                  type="text"
+                  name="location"
+                  placeholder="Location"
+                  value={profile.location}
+                  onChange={handleChange}
+                  className="border border-gray-300 rounded-lg p-3 outline-none"
+                />
+              </div>
+
+              <button
+                type="submit"
+                className="bg-[#FF7401] text-white w-full py-3 rounded-lg font-semibold hover:bg-orange-600 transition mt-6"
+              >
+                Save Changes
+              </button>
+            </form>
+
+            {/* Change Password Form */}
+            <form onSubmit={handlePasswordSubmit} className="bg-white shadow-lg rounded-xl p-6 flex-1">
+              <h2 className="text-xl font-bold text-[#E87730] mb-4 text-center">Change Password</h2>
+
+              <div className="relative mb-4">
+                <input
+                  type={passwordData.showOldPassword ? 'text' : 'password'}
+                  name="oldPassword"
+                  placeholder="Old Password"
+                  value={passwordData.oldPassword}
+                  onChange={handlePasswordChange}
+                  className="border border-gray-300 rounded-lg p-3 outline-none w-full"
+                />
+                <button
+                  type="button"
+                  className="absolute right-3 top-3 text-sm text-gray-500"
+                  onClick={() => toggleVisibility('showOldPassword')}
+                >
+                  {passwordData.showOldPassword ? 'Hide' : 'Show'}
+                </button>
+              </div>
+
+              <div className="relative mb-4">
+                <input
+                  type={passwordData.showNewPassword ? 'text' : 'password'}
+                  name="newPassword"
+                  placeholder="New Password"
+                  value={passwordData.newPassword}
+                  onChange={handlePasswordChange}
+                  className="border border-gray-300 rounded-lg p-3 outline-none w-full"
+                />
+                <button
+                  type="button"
+                  className="absolute right-3 top-3 text-sm text-gray-500"
+                  onClick={() => toggleVisibility('showNewPassword')}
+                >
+                  {passwordData.showNewPassword ? 'Hide' : 'Show'}
+                </button>
+              </div>
+
+              <button
+                type="submit"
+                className="bg-[#FF7401] text-white w-full py-3 rounded-lg font-semibold hover:bg-orange-600 transition"
+              >
+                Change Password
+              </button>
+            </form>
+          </div>
+        </div>
         <Footer />
       </div>
     </>
