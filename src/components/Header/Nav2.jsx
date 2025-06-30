@@ -71,7 +71,7 @@ function Nav2() {
             Home
           </Link>
           <Link
-            to="/home"
+            to="/profile"
             onClick={() => setMenuOpen(false)}
             className="mb-4"
           >
