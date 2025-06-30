@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
-import { Navigate, useNavigate } from 'react-router-dom';
+import { Navigate, useNavigate, Link } from 'react-router-dom'; // ✅ Added Link here
 import Nav from '../components/Header/Nav';
 import Heading from '../components/Header/Heading';
 import Footer from '../components/Footer/Footer';
-import { isLoggedIn } from '../util/auth'; // 🔐 Import auth check
-import { loginUser } from '../util/api';    // ✅ API call
+import { isLoggedIn } from '../util/auth';
+import { loginUser } from '../util/api';
+
 
 function Signin() {
   const navigate = useNavigate();
@@ -26,13 +27,12 @@ function Signin() {
       alert(res.message || 'Login successful!');
       localStorage.setItem('token', res.accessToken);
       localStorage.setItem('role', res.role);
-      navigate('/home2'); // ✅ Redirect after login
+      navigate('/home2');
     } catch (err) {
       alert('Login failed: ' + (err.response?.data?.message || err.message));
     }
   };
 
-  // 🔐 Redirect if already logged in
   if (isLoggedIn()) return <Navigate to="/home2" />;
 
   return (
@@ -71,9 +71,16 @@ function Signin() {
                 placeholder="Password"
                 value={formData.password}
                 onChange={handleChange}
-                className="w-full border border-gray-300 rounded-lg p-3 mb-4 outline-none"
+                className="w-full border border-gray-300 rounded-lg p-3 mb-2 outline-none"
                 required
               />
+            </div>
+
+            {/* 🔗 Forgot Password Link */}
+            <div className="mx-7 text-right mb-4">
+              <Link to="/forgot-password" className="text-sm text-blue-500 hover:underline">
+                Forgot Password?
+              </Link>
             </div>
 
             <div className="mx-7">

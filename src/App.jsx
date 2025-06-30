@@ -9,6 +9,7 @@ import Home2 from './pages/Home2';
 import RequestForm from "./pages/RequestForm";
 import ContactHelpForm from "./pages/ContactHelpForm";
 import Profile from "./pages/Profile";
+import ForgotPassword from './pages/ForgotPassword';
 function App() {
   return (
     <Router>
@@ -21,6 +22,8 @@ function App() {
         <Route path="/RequestForm" element={<RequestForm />} />
         <Route path="/ContactHelpForm" element={<ContactHelpForm />} />
         <Route path="/Profile" element={<Profile />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
+
         {/* Add other pages here, without Heading */}
       </Routes>
     </Router>

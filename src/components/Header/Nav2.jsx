@@ -21,7 +21,7 @@ function Nav2() {
           {/* Logo and Title */}
           <div className="flex items-center space-x-2">
             <img className="h-10 w-10 cursor-pointer" src={logo} alt="logo" />
-            <Link to="/" className="text-lg font-semibold">
+            <Link to="/home2" className="text-lg font-semibold">
               <span className="text-orange-500 font-bold text-xl">Extra Bite</span>
             </Link>
           </div>
