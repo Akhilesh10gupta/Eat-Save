@@ -1,10 +1,17 @@
 import React, { useState } from "react";
-import { Menu, X } from "lucide-react";
+import { Menu, X, LogOut } from "lucide-react";
 import logo from "../../assets/logo.png";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 function Nav2() {
   const [menuOpen, setMenuOpen] = useState(false);
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("role");
+    navigate("/signin");
+  };
 
   return (
     <>
@@ -21,7 +28,7 @@ function Nav2() {
 
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center space-x-6">
-            <Link to="/" className="text-orange-500 font-semibold text-lg">
+            <Link to="/home2" className="text-orange-500 font-semibold text-lg">
               Home
             </Link>
             <Link to="/profile">
@@ -29,6 +36,12 @@ function Nav2() {
                 <span className="text-white text-lg">👤</span>
               </div>
             </Link>
+            <button
+              onClick={handleLogout}
+              className="text-white bg-red-600 px-4 py-2 rounded-lg hover:bg-red-700 transition"
+            >
+              Logout
+            </button>
           </div>
 
           {/* Mobile Menu Button */}
@@ -51,17 +64,30 @@ function Nav2() {
             <X size={32} />
           </button>
           <Link
-            to="/"
+            to="/home2"
             className="text-orange-500 font-semibold text-xl mb-4"
             onClick={() => setMenuOpen(false)}
           >
             Home
           </Link>
-          <Link to="/home" onClick={() => setMenuOpen(false)}>
+          <Link
+            to="/home"
+            onClick={() => setMenuOpen(false)}
+            className="mb-4"
+          >
             <div className="h-12 w-12 bg-orange-500 rounded-full flex items-center justify-center">
               <span className="text-white text-2xl">👤</span>
             </div>
           </Link>
+          <button
+            onClick={() => {
+              setMenuOpen(false);
+              handleLogout();
+            }}
+            className="text-white bg-red-600 px-6 py-2 rounded-lg hover:bg-red-700 transition mt-4"
+          >
+            <LogOut className="inline-block mr-2" /> Logout
+          </button>
         </div>
       )}
     </>
