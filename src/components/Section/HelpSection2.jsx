@@ -111,7 +111,7 @@ function HelpSection2() {
 
         <div className="mt-6 text-center">
           <a
-            href="/browse-more"
+            href="/BrowseDonations"
             className="inline-block bg-[#FF7401] hover:bg-orange-600 text-white font-semibold py-2 px-6 rounded-lg transition duration-300"
           >
             Browse More

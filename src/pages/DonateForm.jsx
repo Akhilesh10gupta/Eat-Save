@@ -3,11 +3,11 @@ import axios from "axios";
 import Nav2 from "../components/Header/Nav2";
 import Heading from "../components/Header/Heading";
 import Footer from "../components/Footer/Footer";
-import { useNavigate } from "react-router-dom"; // 👈 Import navigate
+import { useNavigate } from "react-router-dom";
 
 const DonationForm = () => {
   const [step, setStep] = useState(1);
-  const navigate = useNavigate(); // 👈 Initialize
+  const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
     foodName: "",
@@ -40,16 +40,21 @@ const DonationForm = () => {
         return;
       }
 
+      const isFreeBool = formData.isFree === true || formData.isFree === "true";
+      const priceVal = isFreeBool ? 0 : parseFloat(formData.price);
+
+      if (!isFreeBool && (!formData.price || priceVal <= 0)) {
+        alert("Please enter a valid price greater than 0 for paid food.");
+        return;
+      }
+
       const payload = {
         foodName: formData.foodName,
         description: formData.description,
         quantity: formData.quantity,
         expiryDateTime: formData.expiryDateTime,
-        isFree: formData.isFree === true || formData.isFree === "true",
-        price:
-          formData.isFree === true || formData.isFree === "true"
-            ? 0
-            : parseFloat(formData.price),
+        isFree: isFreeBool,
+        price: priceVal,
         location: formData.location,
         geolocation: formData.geolocation,
         deliveryType: formData.deliveryType
@@ -68,7 +73,7 @@ const DonationForm = () => {
       );
 
       alert("Donation submitted successfully!");
-      navigate("/home2"); // 👈 Redirect here
+      navigate("/home2");
     } catch (err) {
       alert("Donation failed: " + (err.response?.data?.message || err.message));
     }
