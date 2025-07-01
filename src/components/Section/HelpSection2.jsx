@@ -94,10 +94,10 @@ function HelpSection2() {
               <div key={index} className="px-3">
                 <div className="bg-white text-black rounded-xl shadow-lg p-4 h-full flex flex-col items-center justify-between">
                   <img
-                    src={`https://source.unsplash.com/300x200/?food,meal&sig=${index}`}
+                    src={`https://images.unsplash.com/photo-1600891964599-f61ba0e24092?auto=format&fit=crop&w=600&q=80`}
                     alt={item.foodName}
                     className="rounded-md w-full h-40 object-cover mb-3"
-                  />
+                    />
                   <h4 className="text-lg font-bold text-[#FF7401]">{item.foodName}</h4>
                   <p className="text-sm text-gray-600">{item.description}</p>
                   <p className="text-sm">Quantity: {item.quantity}</p>
