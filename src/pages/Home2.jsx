@@ -2,7 +2,8 @@ import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Nav2 from '../components/Header/Nav2';
 import Footer from '../components/Footer/Footer';
-import HeroSection2 from '../components/Section/HeroSection2'
+import HeroSection from '../components/Section/HeroSection'
+import HelpSection2 from '../components/Section/HelpSection2'
 
 function Home2() {
   const navigate = useNavigate();
@@ -22,7 +23,8 @@ function Home2() {
           Welcome to Extra Bite!
         </h1>
       </div>
-      <HeroSection2/>
+      <HeroSection/>
+      <HelpSection2 />
       <Footer />
     </div>
   );

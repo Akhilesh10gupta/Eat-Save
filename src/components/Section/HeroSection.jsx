@@ -1,10 +1,21 @@
 import React from "react";
 import { FaCalendarAlt } from "react-icons/fa";
 import { FaHandHoldingHeart } from "react-icons/fa";
-import { Link } from "react-router-dom";
-
+import { useNavigate, Link } from "react-router-dom"; // ✅ useNavigate added
 
 function HeroSection() {
+  const navigate = useNavigate();
+
+  const handleProtectedNavigation = (path) => {
+    const token = localStorage.getItem("token");
+    if (token) {
+      navigate(path);
+    } else {
+      alert("Please login first.");
+      navigate("/signin");
+    }
+  };
+
   return (
     <section className="md:pt-28 pt-15 pb-20 flex flex-col items-center text-center px-4 bg-transparent">
       {/* Heading */}
@@ -26,10 +37,8 @@ function HeroSection() {
           className="px-4 py-3 rounded-lg border border-gray-500 focus:outline-none focus:ring-2 focus:ring-orange-500 w-80 sm:w-96 bg-transparent text-white placeholder-gray-400"
           style={{ backgroundColor: "transparent" }}
         />
-        <button
-          className="bg-[#FF7401] text-white px-6 py-3 rounded-lg hover:bg-orange-600 transition"
-        >
-         <Link to="/Home2" className="text-lg font-semibold">Get Started</Link>
+        <button className="bg-[#FF7401] text-white px-6 py-3 rounded-lg hover:bg-orange-600 transition">
+          <Link to="/Home2" className="text-lg font-semibold">Get Started</Link>
         </button>
       </div>
 
@@ -37,18 +46,20 @@ function HeroSection() {
       <div className="flex gap-6 mt-8">
         {/* Request Food */}
         <button
+          onClick={() => handleProtectedNavigation("/RequestForm")}
           className="flex items-center gap-2 border-2 border-dashed border-orange-500 px-6 py-3 rounded-lg text-[#FF7401] hover:bg-[#FF7401] hover:text-white transition"
         >
           <FaCalendarAlt />
-          <Link to="/RequestForm" className="text-lg font-semibold">Request Food</Link>
+          <span className="text-lg font-semibold">Request Food</span>
         </button>
 
         {/* Donate Food */}
         <button
+          onClick={() => handleProtectedNavigation("/DonateForm")}
           className="flex items-center gap-2 border-2 border-dashed border-orange-500 px-6 py-3 rounded-lg text-[#FF7401] hover:bg-[#FF7401] hover:text-white transition"
         >
           <FaHandHoldingHeart />
-          <Link to="/DonateForm" className="text-lg font-semibold">Donate Food</Link>
+          <span className="text-lg font-semibold">Donate Food</span>
         </button>
       </div>
     </section>
