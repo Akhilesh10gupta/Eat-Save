@@ -31,7 +31,7 @@ function DonationForm() {
             {step === 1 && (
               <>
                 <h2 className="text-center text-xl sm:text-2xl font-bold text-[#FF7401] mb-6">
-                  Donor Details
+                  Donor Detail
                 </h2>
 
                 <div className="mx-7">
