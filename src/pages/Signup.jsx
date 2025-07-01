@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom'; // ✅ Added Link
 import Nav from '../components/Header/Nav';
 import Heading from '../components/Header/Heading';
 import Footer from '../components/Footer/Footer';
@@ -136,8 +136,6 @@ function Signup() {
                 <option value="USER">User</option>
                 <option value="DONOR">Donor</option>
                 <option value="RECEIVER">Receiver</option>
-                
-                
               </select>
             </div>
 
@@ -148,6 +146,14 @@ function Signup() {
               >
                 Register
               </button>
+            </div>
+
+            {/* 🆕 Already have account redirect */}
+            <div className="mx-7 mt-4 text-center">
+              <span className="text-sm text-gray-600">Already have an account? </span>
+              <Link to="/signin" className="text-sm text-blue-500 hover:underline">
+                Sign In
+              </Link>
             </div>
           </div>
         </form>

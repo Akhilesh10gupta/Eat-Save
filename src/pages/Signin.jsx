@@ -6,7 +6,6 @@ import Footer from '../components/Footer/Footer';
 import { isLoggedIn } from '../util/auth';
 import { loginUser } from '../util/api';
 
-
 function Signin() {
   const navigate = useNavigate();
 
@@ -90,6 +89,14 @@ function Signin() {
               >
                 Login
               </button>
+            </div>
+
+            {/* 🆕 Sign Up Redirect */}
+            <div className="mx-7 mt-4 text-center">
+              <span className="text-sm text-gray-600">Don&apos;t have an account? </span>
+              <Link to="/signup" className="text-sm text-blue-500 hover:underline">
+                Sign Up
+              </Link>
             </div>
           </form>
         </div>
