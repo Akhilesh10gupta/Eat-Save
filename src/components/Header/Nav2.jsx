@@ -10,7 +10,7 @@ function Nav2() {
   const handleLogout = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("role");
-    navigate("/signin");
+    navigate("/"); // Changed from "/signin" to "/"
   };
 
   return (
