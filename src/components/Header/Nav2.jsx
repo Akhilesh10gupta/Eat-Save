@@ -10,7 +10,7 @@ function Nav2() {
   const handleLogout = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("role");
-    navigate("/"); // Changed from "/signin" to "/"
+    navigate("/");
   };
 
   return (
@@ -30,6 +30,9 @@ function Nav2() {
           <div className="hidden md:flex items-center space-x-6">
             <Link to="/home2" className="text-orange-500 font-semibold text-lg">
               Home
+            </Link>
+            <Link to="/my-order" className="text-white font-medium text-lg hover:text-orange-400 transition">
+              My Orders
             </Link>
             <Link to="/profile">
               <div className="h-8 w-8 bg-orange-500 rounded-full flex items-center justify-center">
@@ -63,6 +66,7 @@ function Nav2() {
           >
             <X size={32} />
           </button>
+
           <Link
             to="/home2"
             className="text-orange-500 font-semibold text-xl mb-4"
@@ -70,6 +74,15 @@ function Nav2() {
           >
             Home
           </Link>
+
+          <Link
+            to="/my-order"
+            className="text-white text-xl font-medium mb-4"
+            onClick={() => setMenuOpen(false)}
+          >
+            My Orders
+          </Link>
+
           <Link
             to="/profile"
             onClick={() => setMenuOpen(false)}
@@ -79,6 +92,7 @@ function Nav2() {
               <span className="text-white text-2xl">👤</span>
             </div>
           </Link>
+
           <button
             onClick={() => {
               setMenuOpen(false);

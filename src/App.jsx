@@ -12,6 +12,11 @@ import Profile from "./pages/Profile";
 import ForgotPassword from './pages/ForgotPassword';
 import UserDirectory from './pages/UserDirectory';
 import BrowseDonations from './pages/BrowseDonations';
+import RequestDonation from './pages/RequestDonation';
+import MyReceivedRequests from "./pages/MyReceivedRequests";
+import ConfirmPickup from "./pages/ConfirmPickup";
+import MyOrder from './pages/MyOrder';
+
 function App() {
   return (
     <Router>
@@ -27,6 +32,10 @@ function App() {
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/UserDirectory" element={<UserDirectory />} />
         <Route path="/BrowseDonations" element={<BrowseDonations />} />
+        <Route path="/request-donation/:donationId" element={<RequestDonation />} />
+        <Route path="/my-received-requests" element={<MyReceivedRequests />} />
+        <Route path="/my-order" element={<MyOrder />} />
+        <Route path="/confirm-pickup/:requestId" element={<ConfirmPickup />} />
 
         {/* Add other pages here, without Heading */}
       </Routes>

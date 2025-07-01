@@ -14,7 +14,7 @@ const DonationForm = () => {
     description: "",
     quantity: "",
     expiryDateTime: "",
-    isFree: true,
+    free: true,
     price: 0,
     location: "",
     geolocation: "",
@@ -22,13 +22,17 @@ const DonationForm = () => {
   });
 
   const handleChange = (e) => {
-    const { name, value, type, checked } = e.target;
-    const val = type === "checkbox" ? checked : value;
-    setFormData((prev) => ({ ...prev, [name]: val }));
+    const { name, value, type } = e.target;
 
-    if (name === "isFree") {
-      setFormData((prev) => ({ ...prev, price: val === "true" ? 0 : "" }));
-    }
+    // Handle select for boolean values
+    const val =
+      name === "free" ? JSON.parse(value) : type === "checkbox" ? e.target.checked : value;
+
+    setFormData((prev) => ({
+      ...prev,
+      [name]: val,
+      ...(name === "free" && { price: val ? 0 : "" })
+    }));
   };
 
   const handleSubmit = async (e) => {
@@ -40,10 +44,7 @@ const DonationForm = () => {
         return;
       }
 
-      const isFreeBool = formData.isFree === true || formData.isFree === "true";
-      const priceVal = isFreeBool ? 0 : parseFloat(formData.price);
-
-      if (!isFreeBool && (!formData.price || priceVal <= 0)) {
+      if (!formData.free && (!formData.price || parseFloat(formData.price) <= 0)) {
         alert("Please enter a valid price greater than 0 for paid food.");
         return;
       }
@@ -53,8 +54,8 @@ const DonationForm = () => {
         description: formData.description,
         quantity: formData.quantity,
         expiryDateTime: formData.expiryDateTime,
-        isFree: isFreeBool,
-        price: priceVal,
+        free: formData.free,
+        price: formData.free ? 0 : parseFloat(formData.price),
         location: formData.location,
         geolocation: formData.geolocation,
         deliveryType: formData.deliveryType
@@ -84,7 +85,6 @@ const DonationForm = () => {
       <Heading />
       <div className="bg-gradient-to-t from-[#030711] via-[#050D1E] to-[#0A1A3C] min-h-screen flex flex-col">
         <Nav2 />
-
         <div className="text-left mt-10 px-6 sm:px-10 md:px-20">
           <h1 className="text-white text-xl sm:text-2xl font-bold">
             {step === 1 ? "Donate Food" : "Food Details"}
@@ -180,22 +180,22 @@ const DonationForm = () => {
                     type="datetime-local"
                     value={formData.expiryDateTime}
                     onChange={handleChange}
-                    className="w-full border border-gray-300 rounded-lg p-3 outline-none text-sm sm:text-base appearance-none"
+                    className="w-full border border-gray-300 rounded-lg p-3 outline-none text-sm sm:text-base"
                   />
                 </div>
                 <div className="mx-7 mb-4 mt-4">
                   <label className="block mb-1">Is the food free?</label>
                   <select
-                    name="isFree"
-                    value={formData.isFree}
+                    name="free"
+                    value={formData.free}
                     onChange={handleChange}
                     className="w-full border border-gray-300 rounded-lg p-3 outline-none"
                   >
-                    <option value="true">Yes (Free)</option>
-                    <option value="false">No (Paid)</option>
+                    <option value={true}>Yes (Free)</option>
+                    <option value={false}>No (Paid)</option>
                   </select>
                 </div>
-                {formData.isFree === "false" && (
+                {!formData.free && (
                   <div className="mx-7">
                     <input
                       name="price"
@@ -232,7 +232,6 @@ const DonationForm = () => {
             )}
           </form>
         </div>
-
         <Footer />
       </div>
     </>
