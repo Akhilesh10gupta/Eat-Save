@@ -3,10 +3,11 @@ import axios from "axios";
 import Nav2 from "../components/Header/Nav2";
 import Heading from "../components/Header/Heading";
 import Footer from "../components/Footer/Footer";
-import { FaSearch, FaCalendarAlt, FaUpload } from "react-icons/fa";
+import { useNavigate } from "react-router-dom"; // 👈 Import navigate
 
 const DonationForm = () => {
   const [step, setStep] = useState(1);
+  const navigate = useNavigate(); // 👈 Initialize
 
   const [formData, setFormData] = useState({
     foodName: "",
@@ -45,21 +46,29 @@ const DonationForm = () => {
         quantity: formData.quantity,
         expiryDateTime: formData.expiryDateTime,
         isFree: formData.isFree === true || formData.isFree === "true",
-        price: formData.isFree === true || formData.isFree === "true" ? 0 : parseFloat(formData.price),
+        price:
+          formData.isFree === true || formData.isFree === "true"
+            ? 0
+            : parseFloat(formData.price),
         location: formData.location,
         geolocation: formData.geolocation,
         deliveryType: formData.deliveryType
       };
 
-      await axios.post(`${import.meta.env.VITE_API_BASE_URL}/donations`, payload, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "EXTRABITE-API-KEY": import.meta.env.VITE_API_KEY,
-          "Content-Type": "application/json"
+      await axios.post(
+        `${import.meta.env.VITE_API_BASE_URL}/donations`,
+        payload,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "EXTRABITE-API-KEY": import.meta.env.VITE_API_KEY,
+            "Content-Type": "application/json"
+          }
         }
-      });
+      );
 
       alert("Donation submitted successfully!");
+      navigate("/home2"); // 👈 Redirect here
     } catch (err) {
       alert("Donation failed: " + (err.response?.data?.message || err.message));
     }
@@ -79,20 +88,41 @@ const DonationForm = () => {
         </div>
 
         <div className="flex flex-grow items-center justify-center py-10 px-10 pb-24">
-          <form onSubmit={handleSubmit} className="bg-white shadow-lg rounded-2xl p-6 sm:p-8 w-full max-w-md">
+          <form
+            onSubmit={handleSubmit}
+            className="bg-white shadow-lg rounded-2xl p-6 sm:p-8 w-full max-w-md"
+          >
             {step === 1 && (
               <>
                 <h2 className="text-center text-xl sm:text-2xl font-bold text-[#FF7401] mb-6">
                   Donor Detail
                 </h2>
                 <div className="mx-7">
-                  <input name="location" type="text" value={formData.location} onChange={handleChange} placeholder="Pickup Address" className="w-full border border-gray-300 rounded-lg p-3 mb-4 outline-none text-sm sm:text-base" />
+                  <input
+                    name="location"
+                    type="text"
+                    value={formData.location}
+                    onChange={handleChange}
+                    placeholder="Pickup Address"
+                    className="w-full border border-gray-300 rounded-lg p-3 mb-4 outline-none text-sm sm:text-base"
+                  />
                 </div>
                 <div className="mx-7">
-                  <input name="geolocation" type="text" value={formData.geolocation} onChange={handleChange} placeholder="Geolocation (lat,long)" className="w-full border border-gray-300 rounded-lg p-3 mb-4 outline-none text-sm sm:text-base" />
+                  <input
+                    name="geolocation"
+                    type="text"
+                    value={formData.geolocation}
+                    onChange={handleChange}
+                    placeholder="Geolocation (lat,long)"
+                    className="w-full border border-gray-300 rounded-lg p-3 mb-4 outline-none text-sm sm:text-base"
+                  />
                 </div>
                 <div className="mx-7 mt-6">
-                  <button type="button" onClick={() => setStep(2)} className="bg-[#FF7401] text-white w-full py-3 rounded-lg font-semibold hover:bg-orange-600 transition">
+                  <button
+                    type="button"
+                    onClick={() => setStep(2)}
+                    className="bg-[#FF7401] text-white w-full py-3 rounded-lg font-semibold hover:bg-orange-600 transition"
+                  >
                     Next &gt;&gt;
                   </button>
                 </div>
@@ -105,42 +135,91 @@ const DonationForm = () => {
                   Food Details
                 </h2>
                 <div className="mx-7">
-                  <input name="foodName" type="text" value={formData.foodName} onChange={handleChange} placeholder="Food Name" className="w-full border border-gray-300 rounded-lg p-3 mb-4 outline-none text-sm sm:text-base" />
+                  <input
+                    name="foodName"
+                    type="text"
+                    value={formData.foodName}
+                    onChange={handleChange}
+                    placeholder="Food Name"
+                    className="w-full border border-gray-300 rounded-lg p-3 mb-4 outline-none text-sm sm:text-base"
+                  />
                 </div>
                 <div className="mx-7">
-                  <input name="description" type="text" value={formData.description} onChange={handleChange} placeholder="Description" className="w-full border border-gray-300 rounded-lg p-3 mb-4 outline-none text-sm sm:text-base" />
+                  <input
+                    name="description"
+                    type="text"
+                    value={formData.description}
+                    onChange={handleChange}
+                    placeholder="Description"
+                    className="w-full border border-gray-300 rounded-lg p-3 mb-4 outline-none text-sm sm:text-base"
+                  />
                 </div>
                 <div className="mx-7">
-                  <input name="quantity" type="text" value={formData.quantity} onChange={handleChange} placeholder="Quantity" className="w-full border border-gray-300 rounded-lg p-3 mb-4 outline-none text-sm sm:text-base" />
+                  <input
+                    name="quantity"
+                    type="text"
+                    value={formData.quantity}
+                    onChange={handleChange}
+                    placeholder="Quantity"
+                    className="w-full border border-gray-300 rounded-lg p-3 mb-4 outline-none text-sm sm:text-base"
+                  />
                 </div>
                 <div className="mx-7 mb-1">
-                  <label className="text-sm text-gray-700 font-medium">Select expiry time for donation:</label>
+                  <label className="text-sm text-gray-700 font-medium">
+                    Select expiry time for donation:
+                  </label>
                 </div>
                 <div className="relative mx-7">
-                  <input name="expiryDateTime" type="datetime-local" value={formData.expiryDateTime} onChange={handleChange} className="w-full border border-gray-300 rounded-lg p-3 outline-none text-sm sm:text-base appearance-none" />
+                  <input
+                    name="expiryDateTime"
+                    type="datetime-local"
+                    value={formData.expiryDateTime}
+                    onChange={handleChange}
+                    className="w-full border border-gray-300 rounded-lg p-3 outline-none text-sm sm:text-base appearance-none"
+                  />
                 </div>
                 <div className="mx-7 mb-4 mt-4">
                   <label className="block mb-1">Is the food free?</label>
-                  <select name="isFree" value={formData.isFree} onChange={handleChange} className="w-full border border-gray-300 rounded-lg p-3 outline-none">
+                  <select
+                    name="isFree"
+                    value={formData.isFree}
+                    onChange={handleChange}
+                    className="w-full border border-gray-300 rounded-lg p-3 outline-none"
+                  >
                     <option value="true">Yes (Free)</option>
                     <option value="false">No (Paid)</option>
                   </select>
                 </div>
                 {formData.isFree === "false" && (
                   <div className="mx-7">
-                    <input name="price" type="number" value={formData.price} onChange={handleChange} placeholder="Enter price" className="w-full border border-gray-300 rounded-lg p-3 mb-4 outline-none text-sm sm:text-base" />
+                    <input
+                      name="price"
+                      type="number"
+                      value={formData.price}
+                      onChange={handleChange}
+                      placeholder="Enter price"
+                      className="w-full border border-gray-300 rounded-lg p-3 mb-4 outline-none text-sm sm:text-base"
+                    />
                   </div>
                 )}
                 <div className="mx-7 mb-4">
                   <label className="block mb-1">Delivery Type</label>
-                  <select name="deliveryType" value={formData.deliveryType} onChange={handleChange} className="w-full border border-gray-300 rounded-lg p-3 outline-none">
+                  <select
+                    name="deliveryType"
+                    value={formData.deliveryType}
+                    onChange={handleChange}
+                    className="w-full border border-gray-300 rounded-lg p-3 outline-none"
+                  >
                     <option value="SELF_PICKUP">Self Pickup</option>
                     <option value="DELIVERY_PARTNER">Delivery Partner</option>
                     <option value="ANY">Any</option>
                   </select>
                 </div>
                 <div className="mx-7">
-                  <button type="submit" className="bg-[#FF7401] text-white w-full py-3 rounded-lg font-semibold hover:bg-orange-600 transition">
+                  <button
+                    type="submit"
+                    className="bg-[#FF7401] text-white w-full py-3 rounded-lg font-semibold hover:bg-orange-600 transition"
+                  >
                     Submit
                   </button>
                 </div>
