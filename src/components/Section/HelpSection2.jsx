@@ -1,25 +1,64 @@
-import React from "react";
-
-
-import homefood from "../../assets/homefood.jpg";
-import resturent from "../../assets/resturent.jpeg";
-import packed from "../../assets/packed.jpg";
-import fresh from "../../assets/fresh.png";
-import healthy from "../../assets/healthy.png";
-import special from "../../assets/special.png";
-
-
-import newYorkImg from "../../assets/newyork.png";
-import malaysiaImg from "../../assets/malaysia.png";
-import pakistanImg from "../../assets/pakistan.png";
-import kenyaImg from "../../assets/kenya.png";
-import canadaImg from "../../assets/canada.png";
-import indiaImg from "../../assets/india.png";
+import React, { useEffect, useState } from "react";
+import Slider from "react-slick";
+import "slick-carousel/slick/slick.css";
+import "slick-carousel/slick/slick-theme.css";
 
 function HelpSection2() {
+  const [donations, setDonations] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  const fetchDonations = async () => {
+    try {
+      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/browse/donations`, {
+        headers: {
+          'EXTRABITE-API-KEY': import.meta.env.VITE_API_KEY,
+        },
+      });
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(errorText);
+      }
+
+      const data = await response.json();
+      setDonations(data);
+    } catch (error) {
+      console.error("Failed to fetch donations:", error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchDonations();
+  }, []);
+
+  const settings = {
+    dots: false,
+    infinite: true,
+    speed: 500,
+    slidesToShow: 3,
+    slidesToScroll: 1,
+    autoplay: true,
+    autoplaySpeed: 3000,
+    responsive: [
+      {
+        breakpoint: 1024,
+        settings: {
+          slidesToShow: 2,
+        },
+      },
+      {
+        breakpoint: 600,
+        settings: {
+          slidesToShow: 1,
+        },
+      },
+    ],
+  };
+
   return (
     <div className="bg-transparent text-white py-10 px-5 flex flex-col items-center mt-20">
-      {/* Header Section */}
       <div className="text-center">
         <h2 className="text-3xl font-bold text-[#FF7401]">
           Help where it matters most
@@ -29,52 +68,45 @@ function HelpSection2() {
         </p>
       </div>
 
-      {/* Nearby Meals for Donation */}
-      <div className="mt-10 w-full max-w-5xl">
-        <h3 className="text-xl font-semibold text-[#FF7401] text-center">
+      <div className="mt-10 w-full max-w-6xl">
+        <h3 className="text-xl font-semibold text-[#FF7401] text-center mb-4">
           Nearby Meals for Donation
         </h3>
-        <div className="flex flex-wrap justify-center gap-8 mt-5">
-          {[
-            { name: "Home-cooked Meals", img: homefood },
-            { name: "Restaurant Surplus Food", img: resturent },
-            { name: "Packed Meals", img: packed },
-            { name: "Fresh Produce", img: fresh },
-            { name: "Healthy Meals", img: healthy },
-            { name: "Special Meals", img: special },
-          ].map((item, index) => (
-            <div key={index} className="flex flex-col items-center">
-              <div className="w-24 h-24 rounded-full bg-gray-700 flex items-center justify-center overflow-hidden">
-                <img src={item.img} alt={item.name} className="w-full h-full object-cover rounded-full" />
-              </div>
-              <p className="mt-2 text-sm">{item.name}</p>
-            </div>
-          ))}
-        </div>
-      </div>
 
-      {/* Hunger Hotspots Around You */}
-      <div className="mt-10 w-full max-w-5xl">
-        <h3 className="text-xl font-semibold text-[#FF7401] text-center">
-          Hunger Hotspots Around You
-        </h3>
-        <div className="flex flex-wrap justify-center gap-8 mt-5">
-          {[
-            { name: "New York", img: newYorkImg},
-            { name: "Malaysia", img: malaysiaImg },
-            { name: "Pakistan", img: pakistanImg },
-            { name: "Kenya", img: kenyaImg },
-            { name: "Canada", img: canadaImg },
-            { name: "India", img: indiaImg },
-          ].map((location, index) => (
-            <div key={index} className="flex flex-col items-center">
-              <div className="w-24 h-24 rounded-full bg-gray-700 flex items-center justify-center overflow-hidden">
-                <img src={location.img} alt={location.name} className="w-full h-full object-cover rounded-full" />
+        {loading ? (
+          <p className="text-center text-gray-300">Loading nearby donations...</p>
+        ) : donations.length === 0 ? (
+          <p className="text-center text-gray-300">No donations available at the moment.</p>
+        ) : (
+          <Slider {...settings}>
+            {donations.map((item, index) => (
+              <div key={index} className="px-3">
+                <div className="bg-white text-black rounded-xl shadow-lg p-4 h-full flex flex-col items-center justify-between">
+                  <img
+                    src={`https://source.unsplash.com/300x200/?food,meal&sig=${index}`}
+                    alt={item.foodName}
+                    className="rounded-md w-full h-40 object-cover mb-3"
+                  />
+                  <h4 className="text-lg font-bold text-[#FF7401]">{item.foodName}</h4>
+                  <p className="text-sm text-gray-600">{item.description}</p>
+                  <p className="text-sm">Quantity: {item.quantity}</p>
+                  <p className="text-sm">Donor: {item.donorName}</p>
+                  <p className="text-sm">Location: {item.location}</p>
+                </div>
               </div>
-              <p className="mt-2 text-sm">{location.name}</p>
-            </div>
-          ))}
+            ))}
+          </Slider>
+        )}
+
+        <div className="mt-6 text-center">
+            <a
+                href="/browse-more"
+                className="inline-block bg-[#FF7401] hover:bg-orange-600 text-white font-semibold py-2 px-6 rounded-lg transition duration-300"
+            >
+                Browse More
+            </a>
         </div>
+
       </div>
     </div>
   );
