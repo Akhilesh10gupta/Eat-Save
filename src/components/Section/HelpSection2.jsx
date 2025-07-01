@@ -49,7 +49,7 @@ function HelpSection2() {
         },
       },
       {
-        breakpoint: 600,
+        breakpoint: 768,
         settings: {
           slidesToShow: 1,
         },
@@ -59,6 +59,17 @@ function HelpSection2() {
 
   return (
     <div className="bg-transparent text-white py-10 px-5 flex flex-col items-center mt-20">
+      {/* Hide slick arrows on small screens */}
+      <style>
+        {`
+          @media (max-width: 1023px) {
+            .slick-prev, .slick-next {
+              display: none !important;
+            }
+          }
+        `}
+      </style>
+
       <div className="text-center">
         <h2 className="text-3xl font-bold text-[#FF7401]">
           Help where it matters most
@@ -99,14 +110,13 @@ function HelpSection2() {
         )}
 
         <div className="mt-6 text-center">
-            <a
-                href="/browse-more"
-                className="inline-block bg-[#FF7401] hover:bg-orange-600 text-white font-semibold py-2 px-6 rounded-lg transition duration-300"
-            >
-                Browse More
-            </a>
+          <a
+            href="/browse-more"
+            className="inline-block bg-[#FF7401] hover:bg-orange-600 text-white font-semibold py-2 px-6 rounded-lg transition duration-300"
+          >
+            Browse More
+          </a>
         </div>
-
       </div>
     </div>
   );
