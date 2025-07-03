@@ -23,8 +23,6 @@ const DonationForm = () => {
 
   const handleChange = (e) => {
     const { name, value, type } = e.target;
-
-    // Handle select for boolean values
     const val =
       name === "free" ? JSON.parse(value) : type === "checkbox" ? e.target.checked : value;
 
@@ -109,6 +107,7 @@ const DonationForm = () => {
                     value={formData.location}
                     onChange={handleChange}
                     placeholder="Pickup Address"
+                    required
                     className="w-full border border-gray-300 rounded-lg p-3 mb-4 outline-none text-sm sm:text-base"
                   />
                 </div>
@@ -146,6 +145,7 @@ const DonationForm = () => {
                     value={formData.foodName}
                     onChange={handleChange}
                     placeholder="Food Name"
+                    required
                     className="w-full border border-gray-300 rounded-lg p-3 mb-4 outline-none text-sm sm:text-base"
                   />
                 </div>
@@ -156,6 +156,7 @@ const DonationForm = () => {
                     value={formData.description}
                     onChange={handleChange}
                     placeholder="Description"
+                    required
                     className="w-full border border-gray-300 rounded-lg p-3 mb-4 outline-none text-sm sm:text-base"
                   />
                 </div>
@@ -166,6 +167,7 @@ const DonationForm = () => {
                     value={formData.quantity}
                     onChange={handleChange}
                     placeholder="Quantity"
+                    required
                     className="w-full border border-gray-300 rounded-lg p-3 mb-4 outline-none text-sm sm:text-base"
                   />
                 </div>
@@ -180,6 +182,7 @@ const DonationForm = () => {
                     type="datetime-local"
                     value={formData.expiryDateTime}
                     onChange={handleChange}
+                    required
                     className="w-full border border-gray-300 rounded-lg p-3 outline-none text-sm sm:text-base"
                   />
                 </div>
@@ -189,6 +192,7 @@ const DonationForm = () => {
                     name="free"
                     value={formData.free}
                     onChange={handleChange}
+                    required
                     className="w-full border border-gray-300 rounded-lg p-3 outline-none"
                   >
                     <option value={true}>Yes (Free)</option>
@@ -203,6 +207,7 @@ const DonationForm = () => {
                       value={formData.price}
                       onChange={handleChange}
                       placeholder="Enter price"
+                      required
                       className="w-full border border-gray-300 rounded-lg p-3 mb-4 outline-none text-sm sm:text-base"
                     />
                   </div>
@@ -213,6 +218,7 @@ const DonationForm = () => {
                     name="deliveryType"
                     value={formData.deliveryType}
                     onChange={handleChange}
+                    required
                     className="w-full border border-gray-300 rounded-lg p-3 outline-none"
                   >
                     <option value="SELF_PICKUP">Self Pickup</option>
