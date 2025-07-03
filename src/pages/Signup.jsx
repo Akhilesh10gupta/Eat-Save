@@ -17,6 +17,9 @@ function Signup() {
     role: 'USER', // Default role
   });
 
+  const [isAgreed, setIsAgreed] = useState(false);
+  const [showTermsModal, setShowTermsModal] = useState(false);
+
   useEffect(() => {
     wakeBackend(); // Wake up Render backend if sleeping
   }, []);
@@ -139,10 +142,35 @@ function Signup() {
               </select>
             </div>
 
+            {/* ✅ Terms and Conditions */}
+            <div className="mx-7 mb-4 text-sm text-gray-700">
+              <label className="flex items-start space-x-2">
+                <input
+                  type="checkbox"
+                  checked={isAgreed}
+                  onChange={(e) => setIsAgreed(e.target.checked)}
+                  className="mt-1"
+                />
+                <span>
+                  I agree to the{' '}
+                  <button
+                    type="button"
+                    onClick={() => setShowTermsModal(true)}
+                    className="text-blue-600 underline hover:text-blue-800"
+                  >
+                    Terms and Conditions
+                  </button>
+                </span>
+              </label>
+            </div>
+
             <div className="mx-7">
               <button
                 type="submit"
-                className="bg-[#FF7401] text-white w-full py-3 rounded-lg font-semibold hover:bg-orange-600 transition"
+                disabled={!isAgreed}
+                className={`w-full py-3 rounded-lg font-semibold transition ${
+                  isAgreed ? 'bg-[#FF7401] text-white hover:bg-orange-600' : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                }`}
               >
                 Register
               </button>
@@ -157,6 +185,31 @@ function Signup() {
             </div>
           </div>
         </form>
+
+        {/* ✅ Terms Modal */}
+        {showTermsModal && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+            <div className="bg-white rounded-xl p-6 max-w-lg w-full shadow-lg relative">
+              <h3 className="text-lg font-bold mb-4 text-[#E87730]">Terms and Conditions</h3>
+              <div className="text-sm text-gray-700 max-h-64 overflow-y-auto space-y-3">
+                <p>1. Donors and receivers are solely responsible for the safety and quality of food items exchanged.</p>
+                <p>2. Extra Bite acts only as a facilitator and does not verify the contents, hygiene, or preparation of the food.</p>
+                <p>3. Users must ensure all shared food is safe, unexpired, and handled with care.</p>
+                <p>4. Any disputes or issues arising from donations must be resolved directly between the donor and the receiver.</p>
+                <p>5. By using Extra Bite, you agree to these terms and take full responsibility for your actions.</p>
+              </div>
+              <div className="mt-6 text-right">
+                <button
+                  onClick={() => setShowTermsModal(false)}
+                  className="px-4 py-2 bg-[#FF7401] text-white rounded hover:bg-orange-600"
+                >
+                  Close
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
         <Footer />
       </div>
     </>

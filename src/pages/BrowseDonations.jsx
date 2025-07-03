@@ -12,8 +12,8 @@ const BrowseDonations = () => {
   const [filters, setFilters] = useState({
     foodName: "",
     location: "",
-    free: "",
-    status: "AVAILABLE",
+    foodType: "",
+    sort: "ENDING_SOON",
   });
 
   const navigate = useNavigate();
@@ -29,8 +29,28 @@ const BrowseDonations = () => {
           },
         }
       );
-      setDonations(response.data);
-      setAllResults(response.data); // backup for filtering
+
+      const now = new Date();
+
+      const availableOnly = response.data
+        .filter((d) => d.status === "AVAILABLE")
+        .map((item) => {
+          let countdownTime = item.countdownTime;
+
+          if (item.foodType !== "RAW" && item.createdAt) {
+            const createdAt = new Date(item.createdAt);
+            const expiryTime = new Date(createdAt.getTime() + 4 * 60 * 60 * 1000);
+            countdownTime = Math.max(Math.floor((expiryTime - now) / 1000), 0);
+          }
+
+          return {
+            ...item,
+            countdownTime,
+          };
+        });
+
+      setDonations(availableOnly);
+      setAllResults(availableOnly);
     } catch (error) {
       console.error("Error fetching donations:", error);
     } finally {
@@ -53,14 +73,14 @@ const BrowseDonations = () => {
       );
     }
 
-    if (filters.free === "true") {
-      filtered = filtered.filter((item) => item.free === true);
-    } else if (filters.free === "false") {
-      filtered = filtered.filter((item) => item.free === false);
+    if (filters.foodType) {
+      filtered = filtered.filter((item) => item.foodType === filters.foodType);
     }
 
-    if (filters.status) {
-      filtered = filtered.filter((item) => item.status === filters.status);
+    if (filters.sort === "ENDING_SOON") {
+      filtered.sort((a, b) => (a.countdownTime || Infinity) - (b.countdownTime || Infinity));
+    } else if (filters.sort === "LATEST") {
+      filtered.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
     }
 
     setDonations(filtered);
@@ -70,10 +90,33 @@ const BrowseDonations = () => {
     fetchDonations();
   }, []);
 
+  useEffect(() => {
+    handleSearch();
+  }, [filters, allResults]);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setDonations((prev) =>
+        prev.map((item) => ({
+          ...item,
+          countdownTime: item.countdownTime > 0 ? item.countdownTime - 1 : 0,
+        }))
+      );
+    }, 1000);
+    return () => clearInterval(interval);
+  }, []);
+
   const getFilterSummary = () => {
-    const type = filters.free === "true" ? "Free" : filters.free === "false" ? "Paid" : "All";
-    const status = filters.status || "All";
-    return `Showing: ${type} & ${status} Donations`;
+    const type = filters.foodType || "All";
+    return `Showing: ${type} Donations`;
+  };
+
+  const formatCountdown = (seconds) => {
+    if (!seconds || seconds <= 0) return "Expired";
+    const hrs = String(Math.floor(seconds / 3600)).padStart(2, "0");
+    const mins = String(Math.floor((seconds % 3600) / 60)).padStart(2, "0");
+    const secs = String(seconds % 60).padStart(2, "0");
+    return `${hrs}:${mins}:${secs}`;
   };
 
   return (
@@ -86,10 +129,8 @@ const BrowseDonations = () => {
             Browse Available Donations
           </h1>
 
-          {/* Filter Summary */}
           <p className="text-sm text-center text-gray-300 mb-4">{getFilterSummary()}</p>
 
-          {/* Filter UI */}
           <div className="bg-white rounded-xl p-6 mb-8 shadow-2xl max-w-5xl mx-auto text-black">
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
               <input
@@ -108,34 +149,24 @@ const BrowseDonations = () => {
               />
               <select
                 className="p-3 border border-gray-300 rounded-lg focus:outline-none"
-                value={filters.free}
-                onChange={(e) => setFilters({ ...filters, free: e.target.value })}
+                value={filters.foodType}
+                onChange={(e) => setFilters({ ...filters, foodType: e.target.value })}
               >
                 <option value="">All Types</option>
-                <option value="true">Free</option>
-                <option value="false">Paid</option>
+                <option value="PRECOOKED">Pre-cooked</option>
+                <option value="RAW">Raw</option>
               </select>
               <select
                 className="p-3 border border-gray-300 rounded-lg focus:outline-none"
-                value={filters.status}
-                onChange={(e) => setFilters({ ...filters, status: e.target.value })}
+                value={filters.sort}
+                onChange={(e) => setFilters({ ...filters, sort: e.target.value })}
               >
-                <option value="AVAILABLE">Available</option>
-                <option value="CLAIMED">Claimed</option>
-                <option value="EXPIRED">Expired</option>
+                <option value="ENDING_SOON">Ending Soon</option>
+                <option value="LATEST">Latest First</option>
               </select>
-            </div>
-            <div className="mt-6 text-center">
-              <button
-                onClick={handleSearch}
-                className="bg-[#FF7401] hover:bg-orange-600 text-white font-semibold py-2 px-6 rounded-lg transition"
-              >
-                Search
-              </button>
             </div>
           </div>
 
-          {/* Donations Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto px-2 pb-20">
             {loading ? (
               <p className="text-center col-span-full text-gray-300">Loading donations...</p>
@@ -145,29 +176,34 @@ const BrowseDonations = () => {
               donations.map((item, index) => (
                 <div
                   key={index}
-                  onClick={() => {
-                    if (item.status === "AVAILABLE") {
-                      navigate(`/request-donation/${item.id}`);
-                    }
-                  }}
-                  className={`bg-white text-black rounded-2xl shadow-xl p-5 flex flex-col transition-transform hover:-translate-y-1 hover:shadow-2xl ${
-                    item.status === "AVAILABLE" ? "cursor-pointer" : "opacity-50 pointer-events-none"
-                  }`}
+                  onClick={() => navigate(`/request-donation/${item.id}`)}
+                  className="bg-white text-black rounded-2xl shadow-xl p-5 flex flex-col transition-transform hover:-translate-y-1 hover:shadow-2xl cursor-pointer"
                 >
                   <img
                     src="https://images.unsplash.com/photo-1589308078054-832b5f70a3e3?auto=format&fit=crop&w=500&q=80"
                     alt={item.foodName}
                     className="rounded-lg w-full h-40 object-cover mb-4"
                   />
-                  <h4 className="text-xl font-bold text-[#FF7401] mb-2">{item.foodName}</h4>
+                  <div className="flex justify-between items-center mb-2">
+                    <h4 className="text-xl font-bold text-[#FF7401]">{item.foodName}</h4>
+                    <span
+                      className={`text-xs px-2 py-1 rounded-full ${
+                        item.foodType === "RAW"
+                          ? "bg-green-200 text-green-800"
+                          : "bg-blue-200 text-blue-800"
+                      }`}
+                    >
+                      {item.foodType}
+                    </span>
+                  </div>
                   <p className="text-sm text-gray-700 mb-1">{item.description}</p>
                   <p className="text-sm">
                     Quantity: <span className="font-semibold">{item.quantity}</span>
                   </p>
                   <p className="text-sm">
-                    Free: <span className="font-semibold">{item.free ? "Yes" : "No"}</span>
+                    Free: <span className="font-semibold">{item.isFree === true || item.price === 0 || item.price === null || item.price === undefined ? "Yes" : "No"}</span>
                   </p>
-                  {!item.free && (
+                  {!item.isFree && item.price > 0 && (
                     <p className="text-sm">
                       Price: <span className="font-semibold">₹{item.price}</span>
                     </p>
@@ -181,6 +217,11 @@ const BrowseDonations = () => {
                   <p className="text-sm">
                     Donor: <span className="font-semibold">{item.donorName}</span>
                   </p>
+                  {item.countdownTime !== undefined && (
+                    <p className="text-sm">
+                      Time Left: <span className="font-semibold text-red-600">{formatCountdown(item.countdownTime)}</span>
+                    </p>
+                  )}
                 </div>
               ))
             )}

@@ -118,9 +118,20 @@ function EditProfile() {
 
         <Nav2 />
         <div className="text-left mt-10 px-6 sm:px-10 md:px-20">
-          <h1 className="text-white text-xl sm:text-2xl font-bold">Edit Your Profile</h1>
-          <div className="w-full border-t-2 border-[#E87730] mt-1"></div>
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
+            <h1 className="text-white text-xl sm:text-2xl font-bold mb-2 sm:mb-0">
+              Edit Your Profile
+            </h1>
+            <a
+              href="/dashboard"
+              className="bg-[#FF7401] text-white px-4 py-2 rounded-lg font-semibold hover:bg-orange-600 transition"
+            >
+              Go to Dashboard
+            </a>
+          </div>
+          <div className="w-full border-t-2 border-[#E87730] mt-2"></div>
         </div>
+
 
         <div className="flex flex-col md:flex-row items-start justify-center gap-10 px-10 py-12">
           {/* Left Panel – Profile Preview */}

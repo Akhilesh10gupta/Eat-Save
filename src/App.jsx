@@ -16,6 +16,7 @@ import RequestDonation from './pages/RequestDonation';
 import MyReceivedRequests from "./pages/MyReceivedRequests";
 import ConfirmPickup from "./pages/ConfirmPickup";
 import MyOrder from './pages/MyOrder';
+import Dashboard from './pages/Dashboard';
 
 function App() {
   return (
@@ -36,6 +37,7 @@ function App() {
         <Route path="/my-received-requests" element={<MyReceivedRequests />} />
         <Route path="/my-order" element={<MyOrder />} />
         <Route path="/confirm-pickup/:requestId" element={<ConfirmPickup />} />
+        <Route path="/dashboard" element={<Dashboard />} />
 
         {/* Add other pages here, without Heading */}
       </Routes>

@@ -195,10 +195,10 @@ const MyOrder = () => {
     ALL: [],
   };
 
-  const filteredData =
-    filter === "ALL"
-      ? data
-      : data.filter((item) => statusGroups[filter].includes(item.status));
+  const filteredData = (filter === "ALL"
+    ? data
+    : data.filter((item) => statusGroups[filter].includes(item.status))
+  ).sort((a, b) => new Date(b.createdAt || b.requestDate) - new Date(a.createdAt || a.requestDate));
 
   const getStatusClass = (status) => {
     switch (status) {
@@ -227,6 +227,14 @@ const MyOrder = () => {
     });
   };
 
+  const formatCountdown = (seconds) => {
+    if (!seconds || seconds <= 0) return "Expired";
+    const hrs = String(Math.floor(seconds / 3600)).padStart(2, "0");
+    const mins = String(Math.floor((seconds % 3600) / 60)).padStart(2, "0");
+    const secs = String(seconds % 60).padStart(2, "0");
+    return `${hrs}:${mins}:${secs}`;
+  };
+
   return (
     <>
       <Heading />
@@ -243,8 +251,9 @@ const MyOrder = () => {
               value={viewType}
               onChange={(e) => setViewType(e.target.value)}
             >
-              <option value="requests">My Requests</option>
-              <option value="donations">My Donations</option>
+              <option value="requests">Collected Food</option>
+              <option value="donations">Donated Food</option>
+              <option value="myrequests2">Requested Food</option>
             </select>
             <select
               className="p-3 text-lg rounded-xl bg-white text-black"
@@ -280,7 +289,13 @@ const MyOrder = () => {
                       <strong>Received On:</strong> {formatDate(item.requestDate)}
                     </p>
                     <p className="text-sm mb-1">
-                      <strong>Payment Method:</strong> {item.paymentMethod || "-"}
+                      <strong>Free:</strong> {item.isFree ? "Yes" : "No"}
+                    </p>
+                    <p className="text-sm mb-1">
+                      <strong>Time left:</strong>{" "}
+                      {item.countdownTime !== undefined
+                        ? formatCountdown(item.countdownTime)
+                        : "N/A"}
                     </p>
                     <p className="text-sm mb-1">
                       <strong>{viewType === "requests" ? "Donor" : "Receiver"}:</strong>{" "}
@@ -320,12 +335,17 @@ const MyOrder = () => {
                           onClick={() => getPickupCode(item.id)}
                           className="bg-purple-600 text-white px-4 py-2 rounded"
                         >
-                          Show OTP
+                          Show OTP & Contact Details
                         </button>
                         {pickupCodes[item.id] && (
-                          <p className="mt-2 text-lg font-bold">
-                            Pickup OTP: <span className="text-green-600">{pickupCodes[item.id]}</span>
-                          </p>
+                          <div className="mt-2">
+                            <p className="text-lg font-bold text-green-600">
+                              Pickup OTP: {pickupCodes[item.id].pickupCode}
+                            </p>
+                            <p className="text-sm text-gray-800">
+                              Donor Contact: {pickupCodes[item.id].donorContactNumber}
+                            </p>
+                          </div>
                         )}
                       </div>
                     )}

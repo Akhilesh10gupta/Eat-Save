@@ -11,7 +11,7 @@ const RequestDonation = () => {
   const navigate = useNavigate();
   const [donation, setDonation] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [paymentMethod, setPaymentMethod] = useState("CASH");
+  const [paymentMethod, setPaymentMethod] = useState("");
 
   const fetchDonationDetails = async () => {
     try {
@@ -106,7 +106,7 @@ const RequestDonation = () => {
 
                 {donation.status === "AVAILABLE" ? (
                   <div className="mt-6">
-                    <div className="mb-4">
+                    {/* <div className="mb-4">
                       <label className="block text-lg font-semibold mb-1">
                         Select Payment Method:
                       </label>
@@ -120,7 +120,7 @@ const RequestDonation = () => {
                         <option value="CARD">Card</option>
                         <option value="NOT_APPLICABLE">Not Applicable</option>
                       </select>
-                    </div>
+                    </div> */}
 
                     <button
                       onClick={handleRequest}

@@ -1,12 +1,33 @@
-import React from "react";
 import { FaCalendarAlt } from "react-icons/fa";
 import { FaHandHoldingHeart } from "react-icons/fa";
-import { useNavigate, Link } from "react-router-dom"; // ✅ useNavigate added
+import { useNavigate } from "react-router-dom";
+import useGeolocation from '../../util/useGeolocation';
+import { useState, useEffect } from 'react';
 
 function HeroSection() {
   const navigate = useNavigate();
+  const { address, loading } = useGeolocation();
+  const [location, setLocation] = useState('');
+  const [errorMsg, setErrorMsg] = useState('');
+
+  // Autofill with geolocation address if empty
+  useEffect(() => {
+    if (!loading && address && !location) {
+      setLocation(address);
+    }
+  }, [address, loading]);
+
+  // Helper: Extract 6-digit pin code from address string
+  function extractPinCode(addr) {
+    const match = addr && addr.match(/\b\d{6}\b/);
+    return match ? match[0] : null;
+  }
 
   const handleProtectedNavigation = (path) => {
+    if (!extractPinCode(location)) {
+      setErrorMsg('A valid 6-digit pin code is required in your address.');
+      return;
+    }
     const token = localStorage.getItem("token");
     if (token) {
       navigate(path);
@@ -34,14 +55,19 @@ function HeroSection() {
         <input
           type="text"
           placeholder="Enter your location"
-          className="px-4 py-3 rounded-lg border border-gray-500 focus:outline-none focus:ring-2 focus:ring-orange-500 w-80 sm:w-96 bg-transparent text-white placeholder-gray-400"
+          value={loading ? 'Detecting location...' : location}
+          onChange={e => { setLocation(e.target.value); setErrorMsg(''); }}
+          className={`px-4 py-3 rounded-lg border focus:outline-none focus:ring-2 w-80 sm:w-96 bg-transparent text-white placeholder-gray-400 ${extractPinCode(location) ? 'border-gray-500 focus:ring-orange-500' : 'border-red-500 ring-red-500'}`}
           style={{ backgroundColor: "transparent" }}
         />
-        <button className="bg-[#FF7401] text-white px-6 py-3 rounded-lg hover:bg-orange-600 transition">
-          <Link to="/Home2" className="text-lg font-semibold">Get Started</Link>
+        <button className="bg-[#FF7401] text-white px-6 py-3 rounded-lg hover:bg-orange-600 transition" onClick={() => handleProtectedNavigation('/Home2')}>
+          <span className="text-lg font-semibold">Get Started</span>
         </button>
       </div>
-
+      {!extractPinCode(location) && !loading && (
+        <div className="text-red-500 mt-2 text-sm">A valid 6-digit pin code is required in your address.</div>
+      )}
+      {errorMsg && <div className="text-red-500 mt-2 text-sm">{errorMsg}</div>}
       {/* Buttons Section */}
       <div className="flex gap-6 mt-8">
         {/* Request Food */}
