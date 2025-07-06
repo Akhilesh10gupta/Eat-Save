@@ -7,7 +7,7 @@ function HelpSection2() {
   const [donations, setDonations] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  const fetchDonations = async () => {
+  const fetchEndingSoonDonations = async () => {
     try {
       const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/browse/donations`, {
         headers: {
@@ -21,7 +21,33 @@ function HelpSection2() {
       }
 
       const data = await response.json();
-      setDonations(data);
+      const now = new Date();
+
+      // Step 1: Filter AVAILABLE donations
+      const availableOnly = data
+        .filter((d) => d.status === "AVAILABLE")
+        .map((item) => {
+          let countdownTime = item.countdownTime;
+
+          // Calculate countdown for PRECOOKED items (4-hour expiry rule)
+          if (item.foodType !== "RAW" && item.createdAt) {
+            const createdAt = new Date(item.createdAt);
+            const expiryTime = new Date(createdAt.getTime() + 4 * 60 * 60 * 1000);
+            countdownTime = Math.max(Math.floor((expiryTime - now) / 1000), 0);
+          }
+
+          return {
+            ...item,
+            countdownTime,
+          };
+        });
+
+      // Step 2: Sort by countdownTime (shortest time first)
+      const sorted = availableOnly
+        .sort((a, b) => (a.countdownTime || Infinity) - (b.countdownTime || Infinity))
+        .slice(0, 6); // Limit to 6 items
+
+      setDonations(sorted);
     } catch (error) {
       console.error("Failed to fetch donations:", error.message);
     } finally {
@@ -30,7 +56,7 @@ function HelpSection2() {
   };
 
   useEffect(() => {
-    fetchDonations();
+    fetchEndingSoonDonations();
   }, []);
 
   const settings = {
@@ -57,9 +83,16 @@ function HelpSection2() {
     ],
   };
 
+  const formatCountdown = (seconds) => {
+    if (!seconds || seconds <= 0) return "Expired";
+    const hrs = String(Math.floor(seconds / 3600)).padStart(2, "0");
+    const mins = String(Math.floor((seconds % 3600) / 60)).padStart(2, "0");
+    const secs = String(seconds % 60).padStart(2, "0");
+    return `${hrs}:${mins}:${secs}`;
+  };
+
   return (
     <div className="bg-transparent text-white py-10 px-5 flex flex-col items-center mt-20">
-      {/* Hide slick arrows on small screens */}
       <style>
         {`
           @media (max-width: 1023px) {
@@ -71,38 +104,35 @@ function HelpSection2() {
       </style>
 
       <div className="text-center">
-        <h2 className="text-3xl font-bold text-[#FF7401]">
-          Help where it matters most
-        </h2>
+        <h2 className="text-3xl font-bold text-[#FF7401]">Ending Soon</h2>
         <p className="text-lg mt-2">
-          Your Extra Food Can Be Someone’s Next Meal! — Don’t Waste, Just Share
+          These meals are about to expire. Help someone before it’s too late!
         </p>
       </div>
 
       <div className="mt-10 w-full max-w-6xl">
-        <h3 className="text-xl font-semibold text-[#FF7401] text-center mb-4">
-          Nearby Meals for Donation
-        </h3>
-
         {loading ? (
-          <p className="text-center text-gray-300">Loading nearby donations...</p>
+          <p className="text-center text-gray-300">Loading donations...</p>
         ) : donations.length === 0 ? (
-          <p className="text-center text-gray-300">No donations available at the moment.</p>
+          <p className="text-center text-gray-300">No donations ending soon.</p>
         ) : (
           <Slider {...settings}>
             {donations.map((item, index) => (
               <div key={index} className="px-3">
                 <div className="bg-white text-black rounded-xl shadow-lg p-4 h-full flex flex-col items-center justify-between">
                   <img
-                    src={`https://images.unsplash.com/photo-1600891964599-f61ba0e24092?auto=format&fit=crop&w=600&q=80`}
+                    src={item.imageUrl || "https://placehold.co/400x200?text=No+Image"}
                     alt={item.foodName}
                     className="rounded-md w-full h-40 object-cover mb-3"
-                    />
+                  />
                   <h4 className="text-lg font-bold text-[#FF7401]">{item.foodName}</h4>
                   <p className="text-sm text-gray-600">{item.description}</p>
                   <p className="text-sm">Quantity: {item.quantity}</p>
                   <p className="text-sm">Donor: {item.donorName}</p>
                   <p className="text-sm">Location: {item.location}</p>
+                  <p className="text-sm text-red-600 font-semibold">
+                    Time Left: {formatCountdown(item.countdownTime)}
+                  </p>
                 </div>
               </div>
             ))}

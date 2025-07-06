@@ -84,9 +84,9 @@ const RequestDonation = () => {
           ) : (
             <div className="bg-white text-black rounded-2xl shadow-xl overflow-hidden">
               <img
-                src="https://images.unsplash.com/photo-1589308078054-832b5f70a3e3?auto=format&fit=crop&w=900&q=80"
+                src={donation.imageUrl || "https://placehold.co/600x400?text=No+Image"}
                 className="w-full h-64 object-cover"
-                alt="Donation Food"
+                alt={donation.foodName}
               />
               <div className="p-6 space-y-4">
                 <h2 className="text-3xl font-bold text-[#FF7401]">{donation.foodName}</h2>
@@ -106,6 +106,7 @@ const RequestDonation = () => {
 
                 {donation.status === "AVAILABLE" ? (
                   <div className="mt-6">
+                    {/* You can enable this payment dropdown if required */}
                     {/* <div className="mb-4">
                       <label className="block text-lg font-semibold mb-1">
                         Select Payment Method:
