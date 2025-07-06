@@ -3,7 +3,7 @@ import Heading from '../components/Header/Heading';
 import Footer from '../components/Footer/Footer';
 import Nav2 from '../components/Header/Nav2';
 import { getUserProfile, updateUserProfile } from '../util/api';
-import { resetPassword } from '../util/api'; // ✅ Make sure this is defined in your API
+import { resetPassword } from '../util/api';
 
 function EditProfile() {
   const [profile, setProfile] = useState({
@@ -23,6 +23,9 @@ function EditProfile() {
     showOldPassword: false,
     showNewPassword: false,
   });
+
+  const [uploading, setUploading] = useState(false);
+  const [uploadSuccess, setUploadSuccess] = useState(false);
 
   // Fetch user profile
   useEffect(() => {
@@ -48,7 +51,6 @@ function EditProfile() {
     fetchProfile();
   }, []);
 
-  // Input Change Handlers
   const handleChange = (e) => {
     const { name, value } = e.target;
     setProfile((prev) => ({ ...prev, [name]: value }));
@@ -66,7 +68,39 @@ function EditProfile() {
     }));
   };
 
-  // Update profile
+  const handleImageUpload = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('upload_preset', 'extrabite_preset');
+
+    setUploading(true);
+    setUploadSuccess(false);
+
+    try {
+      const res = await fetch(`https://api.cloudinary.com/v1_1/dl1dutqmd/image/upload`, {
+        method: 'POST',
+        body: formData,
+      });
+      const data = await res.json();
+      setProfile((prev) => ({ ...prev, displayPictureUrl: data.secure_url }));
+
+      // Update profile with new image URL
+      await updateUserProfile({
+        ...profile,
+        displayPictureUrl: data.secure_url,
+      });
+
+      setUploadSuccess(true);
+    } catch (err) {
+      console.error('❌ Image upload failed:', err);
+      alert('Image upload failed. Please try again.');
+    }
+    setUploading(false);
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
@@ -88,7 +122,6 @@ function EditProfile() {
     }
   };
 
-  // Change password
   const handlePasswordSubmit = async (e) => {
     e.preventDefault();
     try {
@@ -115,7 +148,6 @@ function EditProfile() {
     <>
       <Heading />
       <div className="bg-gradient-to-t from-[#030711] via-[#050D1E] to-[#0A1A3C] min-h-screen flex flex-col justify-between">
-
         <Nav2 />
         <div className="text-left mt-10 px-6 sm:px-10 md:px-20">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
@@ -132,16 +164,33 @@ function EditProfile() {
           <div className="w-full border-t-2 border-[#E87730] mt-2"></div>
         </div>
 
-
         <div className="flex flex-col md:flex-row items-start justify-center gap-10 px-10 py-12">
-          {/* Left Panel – Profile Preview */}
+          {/* Profile Preview */}
           <div className="bg-white shadow-md rounded-xl p-6 w-full md:w-1/3 text-center">
             <img
               src={profile.displayPictureUrl || 'https://i.pravatar.cc/150?img=12'}
               alt="Profile"
               className="w-32 h-32 object-cover rounded-full mx-auto mb-4"
             />
-            <h2 className="text-xl font-bold">{profile.fullName}</h2>
+
+            <div className="relative inline-block">
+              <label htmlFor="imageUpload" className="bg-[#FF7401] text-white px-4 py-2 rounded-lg cursor-pointer font-semibold hover:bg-orange-600 transition">
+                Choose Profile Picture
+              </label>
+              <input
+                type="file"
+                accept="image/*"
+                capture="environment"
+                id="imageUpload"
+                onChange={handleImageUpload}
+                className="hidden"
+              />
+            </div>
+
+            {uploading && <p className="text-xs mt-2 text-orange-500">Uploading...</p>}
+            {uploadSuccess && <p className="text-green-600 mt-2 text-sm font-medium">✅ Profile picture updated!</p>}
+
+            <h2 className="text-xl font-bold mt-4">{profile.fullName}</h2>
             <p className="text-gray-500">{profile.email}</p>
             <p className="text-gray-500">📞 +91 {profile.contactNumber}</p>
             <p className="text-gray-500">📍 {profile.location}</p>
@@ -151,12 +200,11 @@ function EditProfile() {
             </div>
           </div>
 
-          {/* Right Panel – Side-by-side Forms */}
+          {/* Forms */}
           <div className="w-full md:w-2/3 flex flex-col lg:flex-row gap-6">
-            {/* Update Profile Form */}
+            {/* Update Details Form */}
             <form onSubmit={handleSubmit} className="bg-white shadow-lg rounded-xl p-6 flex-1">
               <h2 className="text-xl sm:text-2xl font-bold text-[#E87730] mb-6 text-center">Update Details</h2>
-
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <input
                   type="text"
@@ -191,7 +239,6 @@ function EditProfile() {
                   className="border border-gray-300 rounded-lg p-3 outline-none"
                 />
               </div>
-
               <button
                 type="submit"
                 className="bg-[#FF7401] text-white w-full py-3 rounded-lg font-semibold hover:bg-orange-600 transition mt-6"
@@ -203,7 +250,6 @@ function EditProfile() {
             {/* Change Password Form */}
             <form onSubmit={handlePasswordSubmit} className="bg-white shadow-lg rounded-xl p-6 flex-1">
               <h2 className="text-xl font-bold text-[#E87730] mb-4 text-center">Change Password</h2>
-
               <div className="relative mb-4">
                 <input
                   type={passwordData.showOldPassword ? 'text' : 'password'}
@@ -221,7 +267,6 @@ function EditProfile() {
                   {passwordData.showOldPassword ? 'Hide' : 'Show'}
                 </button>
               </div>
-
               <div className="relative mb-4">
                 <input
                   type={passwordData.showNewPassword ? 'text' : 'password'}
@@ -239,7 +284,6 @@ function EditProfile() {
                   {passwordData.showNewPassword ? 'Hide' : 'Show'}
                 </button>
               </div>
-
               <button
                 type="submit"
                 className="bg-[#FF7401] text-white w-full py-3 rounded-lg font-semibold hover:bg-orange-600 transition"
