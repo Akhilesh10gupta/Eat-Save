@@ -162,7 +162,7 @@ const BrowseDonations = () => {
                 onChange={(e) => setFilters({ ...filters, sort: e.target.value })}
               >
                 <option value="ENDING_SOON">Ending Soon</option>
-                <option value="LATEST">Latest First</option>
+                <option value="LATEST">Oldest</option>
               </select>
             </div>
           </div>

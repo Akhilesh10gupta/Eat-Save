@@ -171,3 +171,9 @@ export const getHungerVsFoodWasteBar = async (params = {}) => {
   const res = await api.get('/analytics/statistics/hunger-vs-foodwaste-bar', { params });
   return res.data;
 };
+
+// Get all available donations (public endpoint)
+export const getAvailableDonations = async () => {
+  const res = await api.get('/browse/donations');
+  return res.data;
+};

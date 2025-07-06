@@ -11,7 +11,12 @@ import {
   getUserRatingsAnalytics,
   getUserFoodRequestsAnalytics,
   getMyDonations,
-  getMyReceivedRequests
+  getMyReceivedRequests,
+  getStatisticsSummary,
+  getTopDonors,
+  getYearlyStatistics,
+  getAvailableDonations,
+  // Add new API imports if needed
 } from '../util/api';
 import {
     BarChart,
@@ -49,6 +54,14 @@ function Dashboard() {
     const [recentDonations, setRecentDonations] = useState([]);
     const [recentRequests, setRecentRequests] = useState([]);
     const [activeTab, setActiveTab] = useState('overview');
+    const [ratingStats, setRatingStats] = useState(null);
+    const [foodRequests, setFoodRequests] = useState([]);
+    const [globalStats, setGlobalStats] = useState(null);
+    const [topDonors, setTopDonors] = useState([]);
+    const [availableDonations, setAvailableDonations] = useState([]);
+    const [availableDonationsLoading, setAvailableDonationsLoading] = useState(false);
+    const [availableDonationsError, setAvailableDonationsError] = useState(null);
+    const [loadingExtras, setLoadingExtras] = useState(true);
 
     useEffect(() => {
         // Check if user is logged in
@@ -98,6 +111,58 @@ function Dashboard() {
 
         fetchDashboardData();
     }, [navigate]);
+
+    useEffect(() => {
+        const fetchExtraDashboardData = async () => {
+            try {
+                setLoadingExtras(true);
+                // Fetch all extra dashboard data in parallel
+                const [
+                    ratingStatsData,
+                    foodRequestsData,
+                    globalStatsData,
+                    topDonorsData,
+                    // availableDonationsData, // Uncomment and implement if API utility exists
+                ] = await Promise.all([
+                    // Implement getRatingsStatistics in api.js if not present
+                    (typeof getRatingsStatistics === 'function' ? getRatingsStatistics() : Promise.resolve(null)),
+                    (typeof getMyFoodRequests === 'function' ? getMyFoodRequests() : Promise.resolve([])),
+                    getStatisticsSummary({ region: 'India', year: new Date().getFullYear() }),
+                    getTopDonors({}),
+                    // (typeof getAvailableDonations === 'function' ? getAvailableDonations() : Promise.resolve([])),
+                ]);
+                setRatingStats(ratingStatsData);
+                setFoodRequests(foodRequestsData);
+                setGlobalStats(globalStatsData);
+                setTopDonors(topDonorsData);
+                // setAvailableDonations(availableDonationsData);
+            } catch (error) {
+                console.error('Error fetching extra dashboard data:', error);
+            } finally {
+                setLoadingExtras(false);
+            }
+        };
+        fetchExtraDashboardData();
+    }, []);
+
+    useEffect(() => {
+        // Fetch available donations for the new tab
+        const fetchAvailableDonations = async () => {
+            try {
+                setAvailableDonationsLoading(true);
+                setAvailableDonationsError(null);
+                const data = await getAvailableDonations();
+                setAvailableDonations(data);
+            } catch (error) {
+                setAvailableDonationsError('Failed to load available donations.');
+            } finally {
+                setAvailableDonationsLoading(false);
+            }
+        };
+        if (activeTab === 'availableDonations') {
+            fetchAvailableDonations();
+        }
+    }, [activeTab]);
 
     if (loading) {
         return (
@@ -182,7 +247,12 @@ function Dashboard() {
                             { id: 'overview', label: 'Overview', icon: Activity },
                             { id: 'analytics', label: 'Analytics', icon: TrendingUp },
                             { id: 'activities', label: 'Activities', icon: Clock },
-                            { id: 'achievements', label: 'Achievements', icon: Award }
+                            { id: 'achievements', label: 'Achievements', icon: Award },
+                            { id: 'ratingStats', label: 'Rating Stats', icon: Star },
+                            { id: 'foodRequests', label: 'Food Requests', icon: Package },
+                            { id: 'globalStats', label: 'Global Impact', icon: Activity },
+                            { id: 'topDonors', label: 'Top Donors', icon: Award },
+                            { id: 'availableDonations', label: 'Available Donations', icon: Package },
                         ].map((tab) => {
                             const IconComponent = tab.icon;
                             return (
@@ -399,6 +469,7 @@ function Dashboard() {
                                                     {
                                                         data: donationsChartData.map((_, index) => index),
                                                         valueFormatter: (index) => donationsChartData[index]?.month || '',
+                                                        scaleType: 'band',
                                                     },
                                                 ]}
                                                 series={[
@@ -458,6 +529,7 @@ function Dashboard() {
                                             {
                                                 data: ratingsChartData.map((_, index) => index),
                                                 valueFormatter: (index) => ratingsChartData[index]?.type || '',
+                                                scaleType: 'band',
                                             },
                                         ]}
                                         series={[
@@ -657,6 +729,162 @@ function Dashboard() {
                                     </div>
                                 </div>
                             </div>
+                        </div>
+                    )}
+
+                    {activeTab === 'ratingStats' && (
+                        <div className="bg-white rounded-xl p-6 shadow-lg">
+                            <h3 className="text-lg font-semibold mb-4">Rating Statistics</h3>
+                            {loadingExtras ? (
+                                <div>Loading...</div>
+                            ) : ratingStats ? (
+                                <div>
+                                    <p>Average Rating: {ratingStats.averageRating}</p>
+                                    <p>Total Ratings: {ratingStats.totalRatings}</p>
+                                    <div className="flex space-x-4 mt-2">
+                                        <div>5★: {ratingStats.fiveStarRatings}</div>
+                                        <div>4★: {ratingStats.fourStarRatings}</div>
+                                        <div>3★: {ratingStats.threeStarRatings}</div>
+                                        <div>2★: {ratingStats.twoStarRatings}</div>
+                                        <div>1★: {ratingStats.oneStarRatings}</div>
+                                    </div>
+                                </div>
+                            ) : (
+                                <div>No rating statistics available.</div>
+                            )}
+                        </div>
+                    )}
+
+                    {activeTab === 'foodRequests' && (
+                        <div className="bg-white rounded-xl p-6 shadow-lg">
+                            <h3 className="text-lg font-semibold mb-4">My Food Requests</h3>
+                            {loadingExtras ? (
+                                <div>Loading...</div>
+                            ) : foodRequests && foodRequests.length > 0 ? (
+                                <table className="w-full">
+                                    <thead>
+                                        <tr className="border-b">
+                                            <th className="text-left py-2">Food Type</th>
+                                            <th className="text-left py-2">People</th>
+                                            <th className="text-left py-2">Status</th>
+                                            <th className="text-left py-2">Location</th>
+                                            <th className="text-left py-2">Created</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {foodRequests.map((req) => (
+                                            <tr key={req.id} className="border-b">
+                                                <td className="py-2">{req.foodType}</td>
+                                                <td className="py-2">{req.numberOfPeople}</td>
+                                                <td className="py-2">{req.status}</td>
+                                                <td className="py-2">{req.location}</td>
+                                                <td className="py-2">{formatDate(req.createdAt)}</td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                            ) : (
+                                <div>No food requests found.</div>
+                            )}
+                        </div>
+                    )}
+
+                    {activeTab === 'globalStats' && (
+                        <div className="bg-white rounded-xl p-6 shadow-lg">
+                            <h3 className="text-lg font-semibold mb-4">Global Impact Stats (India)</h3>
+                            {loadingExtras ? (
+                                <div>Loading...</div>
+                            ) : globalStats ? (
+                                <div>
+                                    <p>Year: {globalStats.year}</p>
+                                    <p>Hunger: {globalStats.hunger} million</p>
+                                    <p>Food Waste: {globalStats.foodWaste} {globalStats.foodWasteUnit}</p>
+                                    <p>People Fed: {globalStats.peopleFed}</p>
+                                    <p>Daily Hungry: {globalStats.dailyHungry}</p>
+                                    <p>Enough Food: {globalStats.enoughFood ? 'Yes' : 'No'}</p>
+                                    <p>Short By: {globalStats.shortBy}</p>
+                                    <div className="mt-2">
+                                        <h4 className="font-medium">Food Waste Source Breakdown</h4>
+                                        <ul>
+                                            {globalStats.foodWasteSourceBreakdown && Object.entries(globalStats.foodWasteSourceBreakdown).map(([src, val]) => (
+                                                <li key={src}>{src}: {val}%</li>
+                                            ))}
+                                        </ul>
+                                    </div>
+                                </div>
+                            ) : (
+                                <div>No global stats available.</div>
+                            )}
+                        </div>
+                    )}
+
+                    {activeTab === 'topDonors' && (
+                        <div className="bg-white rounded-xl p-6 shadow-lg">
+                            <h3 className="text-lg font-semibold mb-4">Top Donors</h3>
+                            {loadingExtras ? (
+                                <div>Loading...</div>
+                            ) : topDonors && topDonors.length > 0 ? (
+                                <table className="w-full">
+                                    <thead>
+                                        <tr className="border-b">
+                                            <th className="text-left py-2">Name</th>
+                                            <th className="text-left py-2">Donations</th>
+                                            <th className="text-left py-2">Location</th>
+                                            <th className="text-left py-2">Available</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {topDonors.map((donor) => (
+                                            <tr key={donor.userId} className="border-b">
+                                                <td className="py-2">{donor.name}</td>
+                                                <td className="py-2">{donor.donations}</td>
+                                                <td className="py-2">{donor.location}</td>
+                                                <td className="py-2">{donor.available ? 'Yes' : 'No'}</td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                            ) : (
+                                <div>No top donors found.</div>
+                            )}
+                        </div>
+                    )}
+
+                    {activeTab === 'availableDonations' && (
+                        <div className="bg-white rounded-xl p-6 shadow-lg">
+                            <h3 className="text-lg font-semibold mb-4">Available Donations</h3>
+                            {availableDonationsLoading ? (
+                                <div>Loading...</div>
+                            ) : availableDonationsError ? (
+                                <div className="text-red-500">{availableDonationsError}</div>
+                            ) : availableDonations && availableDonations.length > 0 ? (
+                                <table className="w-full">
+                                    <thead>
+                                        <tr className="border-b">
+                                            <th className="text-left py-2">Food Name</th>
+                                            <th className="text-left py-2">Description</th>
+                                            <th className="text-left py-2">Quantity</th>
+                                            <th className="text-left py-2">Location</th>
+                                            <th className="text-left py-2">Status</th>
+                                            <th className="text-left py-2">Created</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {availableDonations.map((donation) => (
+                                            <tr key={donation.id} className="border-b">
+                                                <td className="py-2">{donation.foodName}</td>
+                                                <td className="py-2">{donation.description}</td>
+                                                <td className="py-2">{donation.quantity}</td>
+                                                <td className="py-2">{donation.location}</td>
+                                                <td className="py-2">{donation.status}</td>
+                                                <td className="py-2">{formatDate(donation.createdDateTime)}</td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                            ) : (
+                                <div>No available donations found.</div>
+                            )}
                         </div>
                     )}
                 </div>

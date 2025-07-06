@@ -32,6 +32,7 @@ function App() {
           <Route path='/' element={<Home />} />
           <Route path="/signin" element={<Signin />} />
           <Route path="/signup" element={<Signup />} />
+          <Route path="/stats" element={<StaticDisplay />} />
 
           {/* Protected Routes */}
           <Route element={<ProtectedRoute />}>
@@ -48,7 +49,6 @@ function App() {
             <Route path="/my-order" element={<MyOrder />} />
             <Route path="/confirm-pickup/:requestId" element={<ConfirmPickup />} />
             <Route path="/dashboard" element={<Dashboard />} />
-            <Route path="/stats" element={<StaticDisplay />} />
           </Route>
         </Routes>
       </LoadingProvider>
