@@ -106,7 +106,7 @@ function HelpSection2() {
       <div className="text-center">
         <h2 className="text-3xl font-bold text-[#FF7401]">Help Where it matters most</h2>
         <p className="text-lg mt-2">
-          These meals are about to expire. Help someone before it’s too late!
+          These meals are about to expire. Help someone before it's too late!
         </p>
       </div>
 
@@ -130,9 +130,6 @@ function HelpSection2() {
                   <p className="text-sm">Quantity: {item.quantity}</p>
                   <p className="text-sm">Donor: {item.donorName}</p>
                   <p className="text-sm">Location: {item.location}</p>
-                  <p className="text-sm text-red-600 font-semibold">
-                    Time Left: {formatCountdown(item.countdownTime)}
-                  </p>
                 </div>
               </div>
             ))}

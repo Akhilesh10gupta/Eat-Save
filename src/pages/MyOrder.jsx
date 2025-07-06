@@ -15,6 +15,7 @@ const MyOrder = () => {
   const [ratings, setRatings] = useState({});
   const [submittingRating, setSubmittingRating] = useState({});
   const [ratedRequests, setRatedRequests] = useState({});
+  const [countdownMap, setCountdownMap] = useState({});
 
   const token = sessionStorage.getItem("token");
 
@@ -87,6 +88,26 @@ const MyOrder = () => {
     fetchData();
     fetchGivenRatings();
   }, [viewType]);
+
+  useEffect(() => {
+    if (!data || data.length === 0) return;
+    const updateCountdowns = () => {
+      const now = Date.now();
+      const newCountdowns = {};
+      data.forEach((item) => {
+        const expiry = getExpiryTime(item);
+        if (expiry) {
+          newCountdowns[item.id] = Math.max(Math.floor((expiry - now) / 1000), 0);
+        } else {
+          newCountdowns[item.id] = null;
+        }
+      });
+      setCountdownMap(newCountdowns);
+    };
+    updateCountdowns();
+    const interval = setInterval(updateCountdowns, 1000);
+    return () => clearInterval(interval);
+  }, [data]);
 
   const acceptRequest = async (id) => {
     try {
@@ -235,6 +256,19 @@ const MyOrder = () => {
     return `${hrs}:${mins}:${secs}`;
   };
 
+  const getExpiryTime = (item) => {
+    if (item.expiryDateTime) {
+      return new Date(item.expiryDateTime).getTime();
+    }
+    if (item.foodType === "PRECOOKED" && item.createdAt) {
+      return new Date(item.createdAt).getTime() + 4 * 60 * 60 * 1000;
+    }
+    if (item.createdAt) {
+      return new Date(item.createdAt).getTime() + 24 * 60 * 60 * 1000;
+    }
+    return null;
+  };
+
   return (
     <>
       <Heading />
@@ -293,8 +327,8 @@ const MyOrder = () => {
                     }</p>
                     <p className="text-sm mb-1">
                       <strong>Time left:</strong>{" "}
-                      {item.countdownTime !== undefined
-                        ? formatCountdown(item.countdownTime)
+                      {countdownMap[item.id] !== undefined && countdownMap[item.id] !== null
+                        ? formatCountdown(countdownMap[item.id])
                         : "N/A"}
                     </p>
                     <p className="text-sm mb-1">

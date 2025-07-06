@@ -15,6 +15,7 @@ const BrowseDonations = () => {
     foodType: "",
     sort: "ENDING_SOON",
   });
+  const [timerTick, setTimerTick] = useState(Date.now());
 
   const navigate = useNavigate();
 
@@ -86,6 +87,19 @@ const BrowseDonations = () => {
     setDonations(filtered);
   };
 
+  const getExpiryTime = (item) => {
+    if (item.expiryDateTime) {
+      return new Date(item.expiryDateTime).getTime();
+    }
+    if (item.foodType === "PRECOOKED" && item.createdAt) {
+      return new Date(item.createdAt).getTime() + 4 * 60 * 60 * 1000;
+    }
+    if (item.createdAt) {
+      return new Date(item.createdAt).getTime() + 24 * 60 * 60 * 1000;
+    }
+    return null;
+  };
+
   useEffect(() => {
     fetchDonations();
   }, []);
@@ -96,12 +110,7 @@ const BrowseDonations = () => {
 
   useEffect(() => {
     const interval = setInterval(() => {
-      setDonations((prev) =>
-        prev.map((item) => ({
-          ...item,
-          countdownTime: item.countdownTime > 0 ? item.countdownTime - 1 : 0,
-        }))
-      );
+      setTimerTick(Date.now());
     }, 1000);
     return () => clearInterval(interval);
   }, []);
@@ -173,66 +182,89 @@ const BrowseDonations = () => {
             ) : donations.length === 0 ? (
               <p className="text-center col-span-full text-gray-300">No donations found.</p>
             ) : (
-              donations.map((item, index) => (
-                <div
-                  key={index}
-                  onClick={() => navigate(`/request-donation/${item.id}`)}
-                  className="bg-white text-black rounded-2xl shadow-xl p-5 flex flex-col transition-transform hover:-translate-y-1 hover:shadow-2xl cursor-pointer"
-                >
-                  <img
-                    src={item.imageUrl}
-                    alt={item.foodName}
-                    className="rounded-lg w-full h-40 object-cover mb-4"
-                  />
-                  <div className="flex justify-between items-center mb-2">
-                    <h4 className="text-xl font-bold text-[#FF7401]">{item.foodName}</h4>
-                    <span
-                      className={`text-xs px-2 py-1 rounded-full ${
-                        item.foodType === "RAW"
-                          ? "bg-green-200 text-green-800"
-                          : "bg-blue-200 text-blue-800"
-                      }`}
-                    >
-                      {item.foodType}
-                    </span>
+              donations.map((item, index) => {
+                let timerCountLeft = null;
+                if (item.timer) {
+                  const created = new Date(item.createdDateTime).getTime();
+                  const now = timerTick;
+                  const passedTime = Math.floor((now - created) / 1000);
+                  timerCountLeft = Math.max(item.countdownTime - passedTime, 0);
+                }
+                // Debug log for timer
+                if (item.timer) {
+                  console.log('TIMER DEBUG', {
+                    id: item.id,
+                    createdDateTime: item.createdDateTime,
+                    countdownTime: item.countdownTime,
+                    timerCountLeft,
+                    now: new Date(timerTick).toISOString(),
+                  });
+                }
+                return (
+                  <div
+                    key={index}
+                    onClick={() => navigate(`/request-donation/${item.id}`)}
+                    className="bg-white text-black rounded-2xl shadow-xl p-5 flex flex-col transition-transform hover:-translate-y-1 hover:shadow-2xl cursor-pointer"
+                  >
+                    <img
+                      src={item.imageUrl}
+                      alt={item.foodName}
+                      className="rounded-lg w-full h-40 object-cover mb-4"
+                    />
+                    <div className="flex justify-between items-center mb-2">
+                      <h4 className="text-xl font-bold text-[#FF7401]">{item.foodName}</h4>
+                      <span
+                        className={`text-xs px-2 py-1 rounded-full ${
+                          item.foodType === "RAW"
+                            ? "bg-green-200 text-green-800"
+                            : "bg-blue-200 text-blue-800"
+                        }`}
+                      >
+                        {item.foodType}
+                      </span>
+                    </div>
+                    <p className="text-sm text-gray-700 mb-1">{item.description}</p>
+                    <p className="text-sm">
+                      Quantity: <span className="font-semibold">{item.quantity}</span>
+                    </p>
+                    <p className="text-sm">
+                      Free:{" "}
+                      <span
+                        className={`text-xs px-2 py-1 rounded-full ${
+                          item.isFree === true || item.price === 0 || item.price === null || item.price === undefined
+                            ? "bg-green-200 text-green-800"
+                            : "bg-blue-200 text-blue-800"
+                        }`}
+                      >
+                        {item.isFree === true || item.price === 0 || item.price === null || item.price === undefined ? "Yes" : "No"}
+                      </span>
+                    </p>
+                    {!item.isFree && item.price > 0 && (
+                      <p className="text-sm">
+                        Price: <span className="font-semibold">₹{item.price}</span>
+                      </p>
+                    )}
+                    <p className="text-sm">
+                      Location: <span className="font-semibold">{item.location}</span>
+                    </p>
+                    <p className="text-sm">
+                      Delivery: <span className="font-semibold">{item.deliveryType}</span>
+                    </p>
+                    <p className="text-sm">
+                      Donor: <span className="font-semibold">{item.donorName}</span>
+                    </p>
+                    {item.timer && (
+                      timerCountLeft > 0 ? (
+                        <p className="text-sm">
+                          Time Left: <span className="font-semibold text-red-600">{formatCountdown(timerCountLeft)}</span>
+                        </p>
+                      ) : (
+                        <p className="text-sm text-red-600 font-semibold">Expired</p>
+                      )
+                    )}
                   </div>
-                  <p className="text-sm text-gray-700 mb-1">{item.description}</p>
-                  <p className="text-sm">
-                    Quantity: <span className="font-semibold">{item.quantity}</span>
-                  </p>
-                  <p className="text-sm">
-                    Free:{" "}
-                    <span
-                      className={`text-xs px-2 py-1 rounded-full ${
-                        item.isFree === true || item.price === 0 || item.price === null || item.price === undefined
-                          ? "bg-green-200 text-green-800"
-                          : "bg-blue-200 text-blue-800"
-                      }`}
-                    >
-                      {item.isFree === true || item.price === 0 || item.price === null || item.price === undefined ? "Yes" : "No"}
-                    </span>
-                  </p>
-                  {!item.isFree && item.price > 0 && (
-                    <p className="text-sm">
-                      Price: <span className="font-semibold">₹{item.price}</span>
-                    </p>
-                  )}
-                  <p className="text-sm">
-                    Location: <span className="font-semibold">{item.location}</span>
-                  </p>
-                  <p className="text-sm">
-                    Delivery: <span className="font-semibold">{item.deliveryType}</span>
-                  </p>
-                  <p className="text-sm">
-                    Donor: <span className="font-semibold">{item.donorName}</span>
-                  </p>
-                  {item.countdownTime !== undefined && (
-                    <p className="text-sm">
-                      Time Left: <span className="font-semibold text-red-600">{formatCountdown(item.countdownTime)}</span>
-                    </p>
-                  )}
-                </div>
-              ))
+                );
+              })
             )}
           </div>
         </div>
