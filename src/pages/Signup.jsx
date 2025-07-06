@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom'; // ✅ Added Link
+import { useNavigate, Link } from 'react-router-dom';
 import Nav from '../components/Header/Nav';
 import Heading from '../components/Header/Heading';
 import Footer from '../components/Footer/Footer';
@@ -14,11 +14,13 @@ function Signup() {
     email: '',
     password: '',
     location: '',
-    role: 'USER', // Default role
+    role: 'USER',
+    fssaiLicenseNumber: '',
   });
 
   const [isAgreed, setIsAgreed] = useState(false);
   const [showTermsModal, setShowTermsModal] = useState(false);
+  const [hasFssai, setHasFssai] = useState(false);
 
   useEffect(() => {
     wakeBackend(); // Wake up Render backend if sleeping
@@ -32,9 +34,13 @@ function Signup() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const res = await registerUser(formData);
+      const payload = { ...formData };
+      if (!hasFssai || formData.role !== 'DONOR') {
+        delete payload.fssaiLicenseNumber;
+      }
 
-      // Save token and role to localStorage
+      const res = await registerUser(payload);
+
       localStorage.setItem('token', res.accessToken);
       localStorage.setItem('role', res.role);
 
@@ -127,7 +133,6 @@ function Signup() {
               />
             </div>
 
-            {/* 🔽 Role Selector */}
             <div className="mx-7 mb-4">
               <select
                 name="role"
@@ -142,7 +147,53 @@ function Signup() {
               </select>
             </div>
 
-            {/* ✅ Terms and Conditions */}
+            {/* FSSAI Question for Donors */}
+            {formData.role === 'DONOR' && (
+              <div className="mx-7 mb-4">
+                <label className="block mb-2 text-sm font-medium text-gray-700">
+                  Do you have an FSSAI License?
+                </label>
+                <div className="flex space-x-4">
+                  <label className="flex items-center space-x-2">
+                    <input
+                      type="radio"
+                      name="hasFssai"
+                      value="yes"
+                      checked={hasFssai === true}
+                      onChange={() => setHasFssai(true)}
+                    />
+                    <span>Yes</span>
+                  </label>
+                  <label className="flex items-center space-x-2">
+                    <input
+                      type="radio"
+                      name="hasFssai"
+                      value="no"
+                      checked={hasFssai === false}
+                      onChange={() => setHasFssai(false)}
+                    />
+                    <span>No</span>
+                  </label>
+                </div>
+              </div>
+            )}
+
+            {/* FSSAI License Input Field */}
+            {formData.role === 'DONOR' && hasFssai && (
+              <div className="mx-7 mb-4">
+                <input
+                  type="text"
+                  name="fssaiLicenseNumber"
+                  placeholder="FSSAI License Number"
+                  value={formData.fssaiLicenseNumber}
+                  onChange={handleChange}
+                  required
+                  className="w-full border border-gray-300 rounded-lg p-3 outline-none"
+                />
+              </div>
+            )}
+
+            {/* Terms and Conditions */}
             <div className="mx-7 mb-4 text-sm text-gray-700">
               <label className="flex items-start space-x-2">
                 <input
@@ -169,14 +220,15 @@ function Signup() {
                 type="submit"
                 disabled={!isAgreed}
                 className={`w-full py-3 rounded-lg font-semibold transition ${
-                  isAgreed ? 'bg-[#FF7401] text-white hover:bg-orange-600' : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                  isAgreed
+                    ? 'bg-[#FF7401] text-white hover:bg-orange-600'
+                    : 'bg-gray-300 text-gray-500 cursor-not-allowed'
                 }`}
               >
                 Register
               </button>
             </div>
 
-            {/* 🆕 Already have account redirect */}
             <div className="mx-7 mt-4 text-center">
               <span className="text-sm text-gray-600">Already have an account? </span>
               <Link to="/signin" className="text-sm text-blue-500 hover:underline">
@@ -186,7 +238,7 @@ function Signup() {
           </div>
         </form>
 
-        {/* ✅ Terms Modal */}
+        {/* Terms Modal */}
         {showTermsModal && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
             <div className="bg-white rounded-xl p-6 max-w-lg w-full shadow-lg relative">
