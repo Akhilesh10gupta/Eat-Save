@@ -27,7 +27,9 @@ function EditProfile() {
   const [uploading, setUploading] = useState(false);
   const [uploadSuccess, setUploadSuccess] = useState(false);
 
-  // Fetch user profile
+  const CLOUD_NAME = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME;
+  const UPLOAD_PRESET = import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET;
+
   useEffect(() => {
     const fetchProfile = async () => {
       try {
@@ -74,26 +76,32 @@ function EditProfile() {
 
     const formData = new FormData();
     formData.append('file', file);
-    formData.append('upload_preset', 'extrabite_preset');
+    formData.append('upload_preset', UPLOAD_PRESET);
 
     setUploading(true);
     setUploadSuccess(false);
 
     try {
-      const res = await fetch(`https://api.cloudinary.com/v1_1/dl1dutqmd/image/upload`, {
+      const res = await fetch(`https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`, {
         method: 'POST',
         body: formData,
       });
       const data = await res.json();
-      setProfile((prev) => ({ ...prev, displayPictureUrl: data.secure_url }));
+      
+      if (data.secure_url) {
+        setProfile((prev) => ({ ...prev, displayPictureUrl: data.secure_url }));
+        console.log(data.secure_url);
 
-      // Update profile with new image URL
-      await updateUserProfile({
-        ...profile,
-        displayPictureUrl: data.secure_url,
-      });
+        await updateUserProfile({
+          ...profile,
+          displayPictureUrl: data.secure_url,
+        });
 
-      setUploadSuccess(true);
+        setUploadSuccess(true);
+      } else {
+        console.error("Cloudinary upload error:", data);
+        alert("Image upload failed. Check your Cloudinary preset.");
+      }
     } catch (err) {
       console.error('❌ Image upload failed:', err);
       alert('Image upload failed. Please try again.');
@@ -144,6 +152,7 @@ function EditProfile() {
     }
   };
 
+//console.log("DP:",profile.displayPictureUrl);
   return (
     <>
       <Heading />
@@ -168,7 +177,7 @@ function EditProfile() {
           {/* Profile Preview */}
           <div className="bg-white shadow-md rounded-xl p-6 w-full md:w-1/3 text-center">
             <img
-              src={profile.displayPictureUrl || 'https://i.pravatar.cc/150?img=12'}
+              src={profile.displayPictureUrl ?profile.displayPictureUrl :`https://api.dicebear.com/7.x/thumbs/svg?seed=${profile.email}`}
               alt="Profile"
               className="w-32 h-32 object-cover rounded-full mx-auto mb-4"
             />

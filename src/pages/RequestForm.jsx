@@ -2,18 +2,66 @@ import React, { useState } from "react";
 import Nav2 from "../components/Header/Nav2";
 import Heading from "../components/Header/Heading";
 import Footer from "../components/Footer/Footer";
-import { FaSearch, FaCalendarAlt } from "react-icons/fa";
+import axios from "axios";
+
+const API = import.meta.env.VITE_API_BASE_URL;
 
 function RequestForm() {
-  const [step, setStep] = useState(1); // Step 1 = User Info, Step 2 = Request Details
+  const [step, setStep] = useState(1);
+  const [loading, setLoading] = useState(false);
+  const [form, setForm] = useState({
+    fullName: "",
+    contactNumber: "",
+    email: "",
+    location: "",
+    geolocation: "",
+    requestedTime: "",
+    requestExpiryTime: "",
+    foodType: "",
+    alternativeFood: "",
+    numberOfPeople: 1,
+    message: "",
+    offerPrice: 0,
+    foodDescription: "",
+    paymentMethod: "CASH",
+  });
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setForm((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleSubmit = async () => {
+    setLoading(true);
+    try {
+      const token = localStorage.getItem("token");
+      const res = await axios.post(
+        `${API}/food-requests/create`,
+        {
+          ...form,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "EXTRABITE-API-KEY": import.meta.env.VITE_API_KEY,
+          },
+        }
+      );
+      alert("✅ Food request submitted successfully!");
+      console.log(res.data);
+    } catch (err) {
+      console.error("❌ Request failed:", err);
+      alert("Failed to submit request.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <>
       <Heading />
       <div className="bg-gradient-to-t from-[#030711] via-[#050D1E] to-[#0A1A3C] min-h-screen flex flex-col">
         <Nav2 />
-
-        {/* Page Title */}
         <div className="text-left mt-10 px-6 sm:px-10 md:px-20">
           <h1 className="text-white text-xl sm:text-2xl font-bold">
             {step === 1 ? "Request Food" : "Request Details"}
@@ -21,65 +69,48 @@ function RequestForm() {
           <div className="w-full border-t-2 border-[#FF7401] mt-1"></div>
         </div>
 
-        {/* FORM CONTAINER */}
         <div className="flex flex-grow items-center justify-center py-10 px-10 pb-24">
           <div className="bg-white shadow-lg rounded-2xl p-6 sm:p-8 w-full max-w-md">
             {step === 1 && (
               <>
-                <h2 className="text-center text-xl sm:text-2xl font-bold text-[#FF7401] mb-6">
-                  Your Details
-                </h2>
-
-                <div className="mx-7">
-                  <input type="text" placeholder="Full Name" className="w-full border border-gray-300 rounded-lg p-3 mb-4 outline-none" />
-                  <div className="flex items-center border border-gray-300 rounded-lg p-3 mb-4">
-                    <span className="mr-2">+91</span>
-                    <input type="text" placeholder="Phone Number" className="w-full outline-none bg-transparent" />
-                  </div>
-                  <input type="email" placeholder="Email Address" className="w-full border border-gray-300 rounded-lg p-3 mb-4 outline-none" />
-                  <input type="text" placeholder="Pickup Location" className="w-full border border-gray-300 rounded-lg p-3 mb-4 outline-none" />
-                  <div className="relative">
-                    <input type="text" placeholder="Preferred Pickup Time" className="w-full border border-gray-300 rounded-lg p-3 pr-10 outline-none" />
-                    <FaCalendarAlt className="absolute right-4 top-4 text-gray-400" />
-                  </div>
-                </div>
-
-                <div className="mx-7 mt-6">
-                  <button onClick={() => setStep(2)} className="bg-[#FF7401] text-white w-full py-3 rounded-lg font-semibold hover:bg-orange-600 transition">
-                    Next &gt;&gt;
-                  </button>
-                </div>
+                <h2 className="text-center text-2xl font-bold text-[#FF7401] mb-6">Your Details</h2>
+                <input name="fullName" value={form.fullName} onChange={handleChange} type="text" placeholder="Full Name" className="w-full border border-gray-300 rounded-lg p-3 mb-4 outline-none" />
+                <input name="contactNumber" value={form.contactNumber} onChange={handleChange} type="text" placeholder="Phone Number" className="w-full border border-gray-300 rounded-lg p-3 mb-4 outline-none" />
+                <input name="email" value={form.email} onChange={handleChange} type="email" placeholder="Email Address" className="w-full border border-gray-300 rounded-lg p-3 mb-4 outline-none" />
+                <input name="location" value={form.location} onChange={handleChange} type="text" placeholder="Pickup Location" className="w-full border border-gray-300 rounded-lg p-3 mb-4 outline-none" />
+                <input name="geolocation" value={form.geolocation} onChange={handleChange} type="text" placeholder="Geolocation (lat,lng)" className="w-full border border-gray-300 rounded-lg p-3 mb-4 outline-none" />
+                <label className="text-sm font-medium text-gray-700 block mb-1">Preferred Pickup Time</label>
+                <input name="requestedTime" value={form.requestedTime} onChange={handleChange} type="datetime-local" className="w-full border border-gray-300 rounded-lg p-3 mb-4 outline-none" />
+                <label className="text-sm font-medium text-gray-700 block mb-1">Request Expiry Time</label>
+                <input name="requestExpiryTime" value={form.requestExpiryTime} onChange={handleChange} type="datetime-local" className="w-full border border-gray-300 rounded-lg p-3 mb-4 outline-none" />
+                <button onClick={() => setStep(2)} className="bg-[#FF7401] text-white w-full py-3 rounded-lg font-semibold hover:bg-orange-600 transition">
+                  Next &gt;&gt;
+                </button>
               </>
             )}
 
             {step === 2 && (
               <>
-                <h2 className="text-center text-xl sm:text-2xl font-bold text-[#FF7401] mb-6">
-                  Request Details
-                </h2>
-
-                <div className="mx-7">
-                  <input type="number" placeholder="How many people are you requesting for?" className="w-full border border-gray-300 rounded-lg p-3 mb-4 outline-none" />
-                  <select className="w-full border border-gray-300 rounded-lg p-3 mb-4 outline-none">
-                    <option>Type of Food Preferred</option>
-                    <option>Vegetarian</option>
-                    <option>Non-Vegetarian</option>
-                    <option>Any</option>
-                  </select>
-                  <input type="text" placeholder="Dietary Restrictions (if any)" className="w-full border border-gray-300 rounded-lg p-3 mb-4 outline-none" />
-                  <textarea placeholder="Additional Message to Donor (optional)" className="w-full border border-gray-300 rounded-lg p-3 mb-4 outline-none" rows="3"></textarea>
-                </div>
-
-                <div className="mx-7">
-                  <button className="bg-[#FF7401] text-white w-full py-3 rounded-lg font-semibold hover:bg-orange-600 transition">
-                    Submit Request
-                  </button>
-                </div>
+                <h2 className="text-center text-2xl font-bold text-[#FF7401] mb-6">Request Details</h2>
+                <input name="foodType" value={form.foodType} onChange={handleChange} type="text" placeholder="Food Type (e.g. Rice)" className="w-full border border-gray-300 rounded-lg p-3 mb-4 outline-none" />
+                <input name="alternativeFood" value={form.alternativeFood} onChange={handleChange} type="text" placeholder="Alternative Food (e.g. Chapati)" className="w-full border border-gray-300 rounded-lg p-3 mb-4 outline-none" />
+                <input name="numberOfPeople" value={form.numberOfPeople} onChange={handleChange} type="number" placeholder="Number of People" className="w-full border border-gray-300 rounded-lg p-3 mb-4 outline-none" />
+                <input name="offerPrice" value={form.offerPrice} onChange={handleChange} type="number" placeholder="Offer Price (0 if Free)" className="w-full border border-gray-300 rounded-lg p-3 mb-4 outline-none" />
+                <textarea name="foodDescription" value={form.foodDescription} onChange={handleChange} placeholder="Food Description (e.g. No peanuts)" className="w-full border border-gray-300 rounded-lg p-3 mb-4 outline-none" rows={2} />
+                <textarea name="message" value={form.message} onChange={handleChange} placeholder="Message to Donor (optional)" className="w-full border border-gray-300 rounded-lg p-3 mb-4 outline-none" rows={2} />
+                <select name="paymentMethod" value={form.paymentMethod} onChange={handleChange} className="w-full border border-gray-300 rounded-lg p-3 mb-4 outline-none">
+                  <option value="CASH">Cash</option>
+                  <option value="UPI">UPI</option>
+                  <option value="CARD">Card</option>
+                  <option value="NOT_APPLICABLE">Not Applicable</option>
+                </select>
+                <button disabled={loading} onClick={handleSubmit} className="bg-[#FF7401] text-white w-full py-3 rounded-lg font-semibold hover:bg-orange-600 transition">
+                  {loading ? "Submitting..." : "Submit Request"}
+                </button>
               </>
             )}
           </div>
         </div>
-
         <Footer />
       </div>
     </>
