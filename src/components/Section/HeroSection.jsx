@@ -28,7 +28,7 @@ function HeroSection() {
       setErrorMsg('A valid 6-digit pin code is required in your address.');
       return;
     }
-    const token = localStorage.getItem("token");
+    const token = sessionStorage.getItem("token");
     if (token) {
       navigate(path);
     } else {

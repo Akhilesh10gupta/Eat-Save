@@ -28,8 +28,8 @@ function Signin() {
 
       const res = await loginUser(formData);
       alert(res.message || 'Login successful!');
-      localStorage.setItem('token', res.accessToken);
-      localStorage.setItem('role', res.role);
+      sessionStorage.setItem('token', res.accessToken);
+      sessionStorage.setItem('role', res.role);
       navigate('/home2');
     } catch (err) {
       alert('Login failed: ' + (err.response?.data?.message || err.message));

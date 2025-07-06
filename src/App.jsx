@@ -17,9 +17,11 @@ import MyReceivedRequests from "./pages/MyReceivedRequests";
 import ConfirmPickup from "./pages/ConfirmPickup";
 import MyOrder from './pages/MyOrder';
 import Dashboard from './pages/Dashboard';
+import StaticDisplay from './pages/StaticsDisplay'
 
 import LoadingOverlay from './components/Loading/LoadingOverlay'; // ✅ correct
 import { LoadingProvider } from './context/LoadingContext'; // ✅ needed for context
+import ProtectedRoute from './components/ProtectedRoute';
 
 function App() {
   return (
@@ -30,19 +32,24 @@ function App() {
           <Route path='/' element={<Home />} />
           <Route path="/signin" element={<Signin />} />
           <Route path="/signup" element={<Signup />} />
-          <Route path="/DonateForm" element={<DonationForm />} />
-          <Route path="/Home2" element={<Home2 />} />
-          <Route path="/RequestForm" element={<RequestForm />} />
-          <Route path="/ContactHelpForm" element={<ContactHelpForm />} />
-          <Route path="/Profile" element={<Profile />} />
-          <Route path="/forgot-password" element={<ForgotPassword />} />
-          <Route path="/UserDirectory" element={<UserDirectory />} />
-          <Route path="/BrowseDonations" element={<BrowseDonations />} />
-          <Route path="/request-donation/:donationId" element={<RequestDonation />} />
-          <Route path="/my-received-requests" element={<MyReceivedRequests />} />
-          <Route path="/my-order" element={<MyOrder />} />
-          <Route path="/confirm-pickup/:requestId" element={<ConfirmPickup />} />
-          <Route path="/dashboard" element={<Dashboard />} />
+
+          {/* Protected Routes */}
+          <Route element={<ProtectedRoute />}>
+            <Route path="/DonateForm" element={<DonationForm />} />
+            <Route path="/Home2" element={<Home2 />} />
+            <Route path="/RequestForm" element={<RequestForm />} />
+            <Route path="/ContactHelpForm" element={<ContactHelpForm />} />
+            <Route path="/Profile" element={<Profile />} />
+            <Route path="/forgot-password" element={<ForgotPassword />} />
+            <Route path="/UserDirectory" element={<UserDirectory />} />
+            <Route path="/BrowseDonations" element={<BrowseDonations />} />
+            <Route path="/request-donation/:donationId" element={<RequestDonation />} />
+            <Route path="/my-received-requests" element={<MyReceivedRequests />} />
+            <Route path="/my-order" element={<MyOrder />} />
+            <Route path="/confirm-pickup/:requestId" element={<ConfirmPickup />} />
+            <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/stats" element={<StaticDisplay />} />
+          </Route>
         </Routes>
       </LoadingProvider>
     </Router>

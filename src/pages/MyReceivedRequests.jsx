@@ -8,7 +8,7 @@ import { useNavigate } from "react-router-dom";
 const MyReceivedRequests = () => {
   const [requests, setRequests] = useState([]);
   const [loading, setLoading] = useState(true);
-  const token = localStorage.getItem("token");
+  const token = sessionStorage.getItem("token");
   const navigate = useNavigate();
 
   const fetchRequests = async () => {

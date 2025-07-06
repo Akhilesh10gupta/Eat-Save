@@ -16,7 +16,7 @@ const MyOrder = () => {
   const [submittingRating, setSubmittingRating] = useState({});
   const [ratedRequests, setRatedRequests] = useState({});
 
-  const token = localStorage.getItem("token");
+  const token = sessionStorage.getItem("token");
 
   const fetchRequests = async () => {
     try {

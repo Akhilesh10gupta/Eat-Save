@@ -15,7 +15,7 @@ const api = axios.create({
 
 // 🧠 Attach Authorization Token (If Logged In)
 api.interceptors.request.use((config) => {
-  const token = localStorage.getItem('token');
+  const token = sessionStorage.getItem('token');
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
   }
@@ -138,5 +138,36 @@ export const getTopDonors = async ({ location = '', available = null } = {}) => 
   if (available !== null) params.available = available;
 
   const res = await api.get('/analytics/public/top-donors', { params });
+  return res.data;
+};
+
+// 📊 Statistics API Endpoints
+export const getYearlyStatistics = async (params = {}) => {
+  const res = await api.get('/analytics/statistics/yearly', { params });
+  return res.data;
+};
+
+export const getGrowthRateStatistics = async (params = {}) => {
+  const res = await api.get('/analytics/statistics/growth-rate', { params });
+  return res.data;
+};
+
+export const getDailyComparisonStatistics = async (params = {}) => {
+  const res = await api.get('/analytics/statistics/daily-comparison', { params });
+  return res.data;
+};
+
+export const getFoodWasteSourcesStatistics = async (params = {}) => {
+  const res = await api.get('/analytics/statistics/food-waste-sources', { params });
+  return res.data;
+};
+
+export const getStatisticsSummary = async (params = {}) => {
+  const res = await api.get('/analytics/statistics/summary', { params });
+  return res.data;
+};
+
+export const getHungerVsFoodWasteBar = async (params = {}) => {
+  const res = await api.get('/analytics/statistics/hunger-vs-foodwaste-bar', { params });
   return res.data;
 };

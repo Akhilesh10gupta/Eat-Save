@@ -128,7 +128,7 @@ const DonationForm = () => {
     }
 
     try {
-      const token = localStorage.getItem("token");
+      const token = sessionStorage.getItem("token");
       if (!token) {
         alert("Login required");
         navigate("/signin");

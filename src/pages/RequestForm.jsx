@@ -34,7 +34,7 @@ function RequestForm() {
   const handleSubmit = async () => {
     setLoading(true);
     try {
-      const token = localStorage.getItem("token");
+      const token = sessionStorage.getItem("token");
       const res = await axios.post(
         `${API}/food-requests/create`,
         {

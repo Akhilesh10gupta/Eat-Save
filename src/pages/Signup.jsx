@@ -45,8 +45,8 @@ function Signup() {
 
       const res = await registerUser(payload);
 
-      localStorage.setItem('token', res.accessToken);
-      localStorage.setItem('role', res.role);
+      sessionStorage.setItem('token', res.accessToken);
+      sessionStorage.setItem('role', res.role);
 
       alert(res.message || 'Registration successful!');
       navigate('/home2');

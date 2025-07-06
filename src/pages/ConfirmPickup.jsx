@@ -10,7 +10,7 @@ const ConfirmPickup = () => {
   const navigate = useNavigate();
   const [otp, setOtp] = useState("");
   const [loading, setLoading] = useState(false);
-  const token = localStorage.getItem("token");
+  const token = sessionStorage.getItem("token");
 
   const handleConfirm = async () => {
     if (!otp) {

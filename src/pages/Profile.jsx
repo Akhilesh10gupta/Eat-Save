@@ -4,6 +4,7 @@ import Footer from '../components/Footer/Footer';
 import Nav2 from '../components/Header/Nav2';
 import { getUserProfile, updateUserProfile } from '../util/api';
 import { resetPassword } from '../util/api';
+import { useNavigate, } from 'react-router-dom';
 
 function EditProfile() {
   const [profile, setProfile] = useState({
@@ -16,6 +17,7 @@ function EditProfile() {
     displayPictureUrl: '',
     profileActive: true,
   });
+  const navigate = useNavigate();
 
   const [passwordData, setPasswordData] = useState({
     oldPassword: '',
