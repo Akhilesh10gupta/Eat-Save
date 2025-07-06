@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useLoading } from '../../context/LoadingContext';
 
 const foodEmojis = ['🍕', '🍔', '🍱', '🥗', '🌮', '🍛'];
-const dotCount = 4;
+const dotCount = 6;
 
 const LoadingOverlay = () => {
   const { loading } = useLoading();
@@ -27,10 +27,8 @@ const LoadingOverlay = () => {
 
   if (!loading) return null;
 
-  const dots = Array.from({ length: dotCount });
-
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-80">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#0f172a]/90">
       <div className="relative w-52 h-52">
         {/* 🍽 Center Emoji */}
         <div className="absolute top-1/2 left-1/2 z-10 -translate-x-1/2 -translate-y-1/2 text-7xl animate-pulse-glow">
@@ -45,18 +43,17 @@ const LoadingOverlay = () => {
             transition: 'transform 30ms linear',
           }}
         >
-          {dots.map((_, i) => {
+          {Array.from({ length: dotCount }).map((_, i) => {
             const angle = (360 / dotCount) * i;
             const rad = (angle * Math.PI) / 180;
             const r = 80;
-            const x = 104 + r * Math.cos(rad); // 104 = center
+            const x = 104 + r * Math.cos(rad); // 104 = center offset
             const y = 104 + r * Math.sin(rad);
             return (
               <div
                 key={i}
-                className="w-4 h-4 rounded-full absolute"
+                className="w-5 h-5 rounded-full absolute bg-gradient-to-br from-yellow-400 to-orange-500 shadow-md"
                 style={{
-                  backgroundColor: i === 0 ? '#facc15' : '#fb923c',
                   left: x,
                   top: y,
                   transform: 'translate(-50%, -50%)',
@@ -67,7 +64,7 @@ const LoadingOverlay = () => {
         </div>
       </div>
 
-      {/* ✨ Emoji Glow Animation */}
+      {/* ✨ Floating Glow Animation */}
       <style>{`
         @keyframes pulseGlow {
           0%, 100% {
