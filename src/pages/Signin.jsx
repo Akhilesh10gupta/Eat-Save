@@ -1,13 +1,15 @@
 import React, { useState } from 'react';
-import { Navigate, useNavigate, Link } from 'react-router-dom'; // ✅ Added Link here
+import { Navigate, useNavigate, Link } from 'react-router-dom';
 import Nav from '../components/Header/Nav';
 import Heading from '../components/Header/Heading';
 import Footer from '../components/Footer/Footer';
 import { isLoggedIn } from '../util/auth';
 import { loginUser } from '../util/api';
+import { useLoading } from '../context/LoadingContext'; // ✅ Added
 
 function Signin() {
   const navigate = useNavigate();
+  const { setLoading } = useLoading(); // ✅ Use loading context
 
   const [formData, setFormData] = useState({
     email: '',
@@ -22,6 +24,8 @@ function Signin() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
+      setLoading(true); // ✅ Show loading
+
       const res = await loginUser(formData);
       alert(res.message || 'Login successful!');
       localStorage.setItem('token', res.accessToken);
@@ -29,6 +33,8 @@ function Signin() {
       navigate('/home2');
     } catch (err) {
       alert('Login failed: ' + (err.response?.data?.message || err.message));
+    } finally {
+      setLoading(false); // ✅ Hide loading
     }
   };
 

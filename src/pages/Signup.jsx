@@ -4,9 +4,11 @@ import Nav from '../components/Header/Nav';
 import Heading from '../components/Header/Heading';
 import Footer from '../components/Footer/Footer';
 import { registerUser, wakeBackend } from '../util/api';
+import { useLoading } from '../context/LoadingContext'; // ✅ Added
 
 function Signup() {
   const navigate = useNavigate();
+  const { setLoading } = useLoading(); // ✅ Used loading context
 
   const [formData, setFormData] = useState({
     fullName: '',
@@ -14,7 +16,7 @@ function Signup() {
     email: '',
     password: '',
     location: '',
-    role: 'USER',
+    role: 'DONOR',
     fssaiLicenseNumber: '',
   });
 
@@ -23,7 +25,7 @@ function Signup() {
   const [hasFssai, setHasFssai] = useState(false);
 
   useEffect(() => {
-    wakeBackend(); // Wake up Render backend if sleeping
+    wakeBackend();
   }, []);
 
   const handleChange = (e) => {
@@ -34,6 +36,8 @@ function Signup() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
+      setLoading(true); // ✅ Show loading
+
       const payload = { ...formData };
       if (!hasFssai || formData.role !== 'DONOR') {
         delete payload.fssaiLicenseNumber;
@@ -54,6 +58,8 @@ function Signup() {
           : err.response?.data?.message || err.message;
 
       alert('Registration failed: ' + message);
+    } finally {
+      setLoading(false); // ✅ Hide loading
     }
   };
 
@@ -141,7 +147,6 @@ function Signup() {
                 required
                 className="w-full border border-gray-300 rounded-lg p-3 outline-none bg-white"
               >
-                <option value="USER">User</option>
                 <option value="DONOR">Donor</option>
                 <option value="RECEIVER">Receiver</option>
               </select>
@@ -193,7 +198,6 @@ function Signup() {
               </div>
             )}
 
-            {/* Terms and Conditions */}
             <div className="mx-7 mb-4 text-sm text-gray-700">
               <label className="flex items-start space-x-2">
                 <input
@@ -238,7 +242,6 @@ function Signup() {
           </div>
         </form>
 
-        {/* Terms Modal */}
         {showTermsModal && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
             <div className="bg-white rounded-xl p-6 max-w-lg w-full shadow-lg relative">
