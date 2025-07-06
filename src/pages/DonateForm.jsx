@@ -1,14 +1,20 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 import Nav2 from "../components/Header/Nav2";
 import Heading from "../components/Header/Heading";
 import Footer from "../components/Footer/Footer";
-import { useNavigate } from "react-router-dom";
 import useGeolocation from "../util/useGeolocation";
+import { useLoading } from "../context/LoadingContext";
 
 const DonationForm = () => {
   const navigate = useNavigate();
-  const { latitude, longitude, address, loading } = useGeolocation();
+  const { setLoading } = useLoading();
+  const { latitude, longitude, address, loading: locationLoading } = useGeolocation();
+
+  const fileInputRef = useRef(null);
+  const [imagePreview, setImagePreview] = useState(null);
+  const [imageFile, setImageFile] = useState(null);
   const [errorMsg, setErrorMsg] = useState("");
 
   const [formData, setFormData] = useState({
@@ -26,45 +32,67 @@ const DonationForm = () => {
   });
 
   useEffect(() => {
-    if (!loading) {
+    if (!locationLoading) {
       setFormData((prev) => ({
         ...prev,
         location: prev.location || address || "",
-        geolocation:
-          latitude && longitude ? `${latitude},${longitude}` : "",
+        geolocation: latitude && longitude ? `${latitude},${longitude}` : "",
       }));
     }
-  }, [address, latitude, longitude, loading]);
+  }, [address, latitude, longitude, locationLoading]);
 
-  function extractPinCode(address) {
+  const extractPinCode = (address) => {
     const match = address && address.match(/\b\d{6}\b/);
     return match ? match[0] : null;
-  }
+  };
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
     let val = value;
-
     if (type === "checkbox") val = checked;
     if (name === "isFree") val = value === "true";
     if (name === "refrigerationAvailable") val = value === "true";
     if (name === "foodType") {
       setFormData((prev) => ({ ...prev, refrigerationAvailable: false }));
     }
-
     setFormData((prev) => ({
       ...prev,
       [name]: val,
       ...(name === "isFree" && { price: val ? "" : prev.price }),
     }));
-
     if (name === "location") setErrorMsg("");
+  };
+
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setImageFile(file);
+      setImagePreview(URL.createObjectURL(file));
+    }
+  };
+
+  const handleImageButtonClick = () => {
+    fileInputRef.current.click();
+  };
+
+  const uploadToCloudinary = async (file) => {
+    const form = new FormData();
+    form.append("file", file);
+    form.append("upload_preset", import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET);
+
+    const res = await axios.post(
+      `https://api.cloudinary.com/v1_1/${import.meta.env.VITE_CLOUDINARY_CLOUD_NAME}/image/upload`,
+      form
+    );
+    return res.data.secure_url;
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setErrorMsg("");
+    setLoading(true); // Show global loading
 
-    // Validation
+    // Basic validation
     if (
       !formData.foodName ||
       !formData.description ||
@@ -74,16 +102,19 @@ const DonationForm = () => {
       !formData.foodType
     ) {
       setErrorMsg("Please fill all required fields.");
+      setLoading(false);
       return;
     }
 
     if (!extractPinCode(formData.location)) {
       setErrorMsg("A valid 6-digit pin code is required in the Pickup Address.");
+      setLoading(false);
       return;
     }
 
     if (!formData.isFree && (!formData.price || parseFloat(formData.price) <= 0)) {
       setErrorMsg("Please enter a valid price greater than 0 for paid food.");
+      setLoading(false);
       return;
     }
 
@@ -92,6 +123,7 @@ const DonationForm = () => {
       typeof formData.refrigerationAvailable !== "boolean"
     ) {
       setErrorMsg("Please specify refrigeration availability for precooked food.");
+      setLoading(false);
       return;
     }
 
@@ -103,40 +135,42 @@ const DonationForm = () => {
         return;
       }
 
+      let imageUrl = "";
+      if (imageFile) {
+        imageUrl = await uploadToCloudinary(imageFile);
+      }
+
       const payload = {
         foodName: formData.foodName,
         description: formData.description,
         quantity: formData.quantity,
         expiryDateTime: formData.expiryDateTime,
-        free: formData.isFree, // ✅ fixed key here
-        price: formData.isFree ? 0.0 : parseFloat(formData.price),
+        free: formData.isFree,
+        price: formData.isFree ? 0 : parseFloat(formData.price),
         location: formData.location,
         geolocation: formData.geolocation,
         deliveryType: formData.deliveryType,
         foodType: formData.foodType,
         refrigerationAvailable:
-          formData.foodType === "PRECOOKED"
-            ? formData.refrigerationAvailable
-            : undefined,
+          formData.foodType === "PRECOOKED" ? formData.refrigerationAvailable : undefined,
+        imageUrl: imageUrl || undefined,
       };
-      
-      await axios.post(
-        `${import.meta.env.VITE_API_BASE_URL}/donations`,
-        payload,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "EXTRABITE-API-KEY": import.meta.env.VITE_API_KEY,
-            "Content-Type": "application/json",
-          },
-        }
-      );
+
+      await axios.post(`${import.meta.env.VITE_API_BASE_URL}/donations`, payload, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "EXTRABITE-API-KEY": import.meta.env.VITE_API_KEY,
+          "Content-Type": "application/json",
+        },
+      });
 
       alert("Donation submitted successfully!");
       navigate("/home2");
     } catch (err) {
       console.error("Error submitting donation:", err.response?.data || err);
       alert("Donation failed: " + (err.response?.data?.message || err.message));
+    } finally {
+      setLoading(false); // Hide global loading
     }
   };
 
@@ -145,10 +179,9 @@ const DonationForm = () => {
       <Heading />
       <div className="bg-gradient-to-t from-[#030711] via-[#050D1E] to-[#0A1A3C] min-h-screen flex flex-col">
         <Nav2 />
+
         <div className="text-left mt-10 px-6 sm:px-10 md:px-20">
-          <h1 className="text-white text-xl sm:text-2xl font-bold">
-            Donate Food
-          </h1>
+          <h1 className="text-white text-xl sm:text-2xl font-bold">Donate Food</h1>
           <div className="w-full border-t-2 border-[#FF7401] mt-1"></div>
         </div>
 
@@ -170,8 +203,37 @@ const DonationForm = () => {
                 onChange={handleChange}
                 placeholder="Food Name"
                 required
-                className="w-full border border-gray-300 rounded-lg p-3 mb-4 outline-none text-sm sm:text-base"
+                className="w-full border border-gray-300 rounded-lg p-3 mb-4 outline-none"
               />
+            </div>
+
+            {/* Image Upload */}
+            <div className="mx-7 mb-4">
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Upload or Capture Food Image
+              </label>
+              <button
+                type="button"
+                onClick={handleImageButtonClick}
+                className="w-full bg-[#FF7401] text-white font-semibold py-2 px-4 rounded-lg hover:bg-orange-600"
+              >
+                Choose / Capture Image
+              </button>
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/*"
+                capture="environment"
+                onChange={handleImageChange}
+                style={{ display: "none" }}
+              />
+              {imagePreview && (
+                <img
+                  src={imagePreview}
+                  alt="Preview"
+                  className="mt-3 rounded-md w-full max-h-52 object-cover"
+                />
+              )}
             </div>
 
             {/* Description */}
@@ -183,7 +245,7 @@ const DonationForm = () => {
                 onChange={handleChange}
                 placeholder="Description"
                 required
-                className="w-full border border-gray-300 rounded-lg p-3 mb-4 outline-none text-sm sm:text-base"
+                className="w-full border border-gray-300 rounded-lg p-3 mb-4 outline-none"
               />
             </div>
 
@@ -196,35 +258,34 @@ const DonationForm = () => {
                 onChange={handleChange}
                 placeholder="Quantity (e.g., 2 plates)"
                 required
-                className="w-full border border-gray-300 rounded-lg p-3 mb-4 outline-none text-sm sm:text-base"
+                className="w-full border border-gray-300 rounded-lg p-3 mb-4 outline-none"
               />
             </div>
 
             {/* Expiry DateTime */}
             <div className="mx-7 mb-1">
               <label className="text-sm text-gray-700 font-medium">
-                Select expiry time for donation:
+                Select expiry time:
               </label>
             </div>
-            <div className="relative mx-7">
+            <div className="mx-7">
               <input
                 name="expiryDateTime"
                 type="datetime-local"
                 value={formData.expiryDateTime}
                 onChange={handleChange}
                 required
-                className="w-full border border-gray-300 rounded-lg p-3 outline-none text-sm sm:text-base"
+                className="w-full border border-gray-300 rounded-lg p-3 outline-none"
               />
             </div>
 
             {/* Is Free */}
-            <div className="mx-7 mb-4 mt-4">
+            <div className="mx-7 my-4">
               <label className="block mb-1">Is the food free?</label>
               <select
                 name="isFree"
                 value={formData.isFree}
                 onChange={handleChange}
-                required
                 className="w-full border border-gray-300 rounded-lg p-3 outline-none"
               >
                 <option value={true}>Yes (Free)</option>
@@ -242,7 +303,7 @@ const DonationForm = () => {
                   onChange={handleChange}
                   placeholder="Enter price"
                   required
-                  className="w-full border border-gray-300 rounded-lg p-3 mb-4 outline-none text-sm sm:text-base"
+                  className="w-full border border-gray-300 rounded-lg p-3 mb-4 outline-none"
                 />
               </div>
             )}
@@ -254,7 +315,6 @@ const DonationForm = () => {
                 name="foodType"
                 value={formData.foodType}
                 onChange={handleChange}
-                required
                 className="w-full border border-gray-300 rounded-lg p-3 outline-none"
               >
                 <option value="PRECOOKED">Pre-cooked</option>
@@ -262,10 +322,10 @@ const DonationForm = () => {
               </select>
             </div>
 
-            {/* Refrigeration Available */}
+            {/* Refrigeration */}
             {formData.foodType === "PRECOOKED" && (
               <div className="mx-7 mb-4">
-                <label className="block mb-1">Is refrigeration available?</label>
+                <label className="block mb-1">Refrigeration Available?</label>
                 <select
                   name="refrigerationAvailable"
                   value={formData.refrigerationAvailable}
@@ -278,7 +338,7 @@ const DonationForm = () => {
               </div>
             )}
 
-            {/* Pickup Address */}
+            {/* Location */}
             <div className="mx-7">
               <input
                 name="location"
@@ -287,16 +347,17 @@ const DonationForm = () => {
                 onChange={handleChange}
                 placeholder="Pickup Address"
                 required
-                className={`w-full border rounded-lg p-3 mb-4 outline-none text-sm sm:text-base ${
+                className={`w-full border rounded-lg p-3 mb-4 outline-none ${
                   extractPinCode(formData.location)
                     ? "border-gray-300"
                     : "border-red-500 ring-2 ring-red-500"
                 }`}
               />
             </div>
+
             {!extractPinCode(formData.location) && (
               <div className="text-red-600 mb-2 text-sm">
-                A valid 6-digit pin code is required in the Pickup Address.
+                A valid 6-digit pin code is required.
               </div>
             )}
             {errorMsg && (
@@ -308,10 +369,9 @@ const DonationForm = () => {
               <input
                 name="geolocation"
                 type="text"
-                value={loading ? "Detecting location..." : formData.geolocation}
-                placeholder="Geolocation (lat,long)"
+                value={locationLoading ? "Detecting location..." : formData.geolocation}
                 readOnly
-                className="w-full border border-gray-300 rounded-lg p-3 mb-4 outline-none text-sm sm:text-base"
+                className="w-full border border-gray-300 rounded-lg p-3 mb-4 outline-none"
               />
             </div>
 
@@ -341,6 +401,7 @@ const DonationForm = () => {
             </div>
           </form>
         </div>
+
         <Footer />
       </div>
     </>

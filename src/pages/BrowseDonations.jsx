@@ -180,7 +180,7 @@ const BrowseDonations = () => {
                   className="bg-white text-black rounded-2xl shadow-xl p-5 flex flex-col transition-transform hover:-translate-y-1 hover:shadow-2xl cursor-pointer"
                 >
                   <img
-                    src="https://images.unsplash.com/photo-1589308078054-832b5f70a3e3?auto=format&fit=crop&w=500&q=80"
+                    src={item.imageUrl}
                     alt={item.foodName}
                     className="rounded-lg w-full h-40 object-cover mb-4"
                   />
@@ -201,7 +201,16 @@ const BrowseDonations = () => {
                     Quantity: <span className="font-semibold">{item.quantity}</span>
                   </p>
                   <p className="text-sm">
-                    Free: <span className="font-semibold">{item.isFree === true || item.price === 0 || item.price === null || item.price === undefined ? "Yes" : "No"}</span>
+                    Free:{" "}
+                    <span
+                      className={`text-xs px-2 py-1 rounded-full ${
+                        item.isFree === true || item.price === 0 || item.price === null || item.price === undefined
+                          ? "bg-green-200 text-green-800"
+                          : "bg-blue-200 text-blue-800"
+                      }`}
+                    >
+                      {item.isFree === true || item.price === 0 || item.price === null || item.price === undefined ? "Yes" : "No"}
+                    </span>
                   </p>
                   {!item.isFree && item.price > 0 && (
                     <p className="text-sm">
