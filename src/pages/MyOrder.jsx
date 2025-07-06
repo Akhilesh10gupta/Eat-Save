@@ -288,9 +288,9 @@ const MyOrder = () => {
                     <p className="text-sm mb-1">
                       <strong>Received On:</strong> {formatDate(item.requestDate)}
                     </p>
-                    <p className="text-sm mb-1">
-                      <strong>Free:</strong> {item.isFree ? "Yes" : "No"}
-                    </p>
+                     <p><strong>Free:</strong> {
+                      (item.isFree === true || item.isFree === "true" || item.price === 0 || item.price === "0") ? "Yes" : "No"
+                    }</p>
                     <p className="text-sm mb-1">
                       <strong>Time left:</strong>{" "}
                       {item.countdownTime !== undefined
