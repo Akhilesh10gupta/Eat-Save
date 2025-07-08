@@ -11,7 +11,7 @@
 
 ## 🌐 Live Demo
 
-- **Frontend:** [extra-bite-frontend.vercel.app](https://extra-bite-frontend.vercel.app)
+- **Frontend:** [extrabite.vercel.app](https://extrabite.vercel.app)
 - **Backend API Docs:** [Swagger UI](https://extrabite-backend-2.onrender.com/swagger-ui/index.html#/)
 
 ---
