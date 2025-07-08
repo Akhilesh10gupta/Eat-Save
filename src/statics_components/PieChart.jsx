@@ -18,16 +18,16 @@ const PieChart = ({ data, region }) => {
             {
                 data: Object.values(breakdown),
                 backgroundColor: [
-                    '#E67E22',
+                    '#FFFFFF',
                     '#2ECC71',
                     '#F4D03F',
-                    '#FFFFFF',
+                    '#E67E22',
                 ],
                 borderColor: [
-                    '#E67E22',
+                    '#FFFFFF',
                     '#2ECC71',
                     '#F4D03F',
-                    '#FFFFFF',
+                    '#E67E22',
                 ],
                 borderWidth: 2,
                 hoverOffset: 10,
