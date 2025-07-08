@@ -16,6 +16,8 @@ const BrowseDonations = () => {
     sort: "ENDING_SOON",
   });
   const [timerTick, setTimerTick] = useState(Date.now());
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 6; // Show 6 donations per page
 
   const navigate = useNavigate();
 
@@ -115,6 +117,18 @@ const BrowseDonations = () => {
     return () => clearInterval(interval);
   }, []);
 
+  // Reset to first page when filters change
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [filters]);
+
+  // Pagination logic
+  const totalPages = Math.ceil(donations.length / itemsPerPage);
+  const paginatedDonations = donations.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
+
   const getFilterSummary = () => {
     const type = filters.foodType || "All";
     return `Showing: ${type} Donations`;
@@ -182,7 +196,7 @@ const BrowseDonations = () => {
             ) : donations.length === 0 ? (
               <p className="text-center col-span-full text-gray-300">No donations found.</p>
             ) : (
-              donations.map((item, index) => {
+              paginatedDonations.map((item, index) => {
                 let timerCountLeft = null;
                 if (item.timer) {
                   const created = new Date(item.createdDateTime).getTime();
@@ -267,6 +281,34 @@ const BrowseDonations = () => {
               })
             )}
           </div>
+          {/* Pagination Controls */}
+          {!loading && donations.length > itemsPerPage && (
+            <div className="flex justify-center items-center space-x-2 my-6">
+              <button
+                onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+                disabled={currentPage === 1}
+                className={`px-3 py-1 rounded ${currentPage === 1 ? 'bg-gray-400 cursor-not-allowed' : 'bg-orange-500 text-white hover:bg-orange-600'}`}
+              >
+                Previous
+              </button>
+              {Array.from({ length: totalPages }, (_, i) => (
+                <button
+                  key={i}
+                  onClick={() => setCurrentPage(i + 1)}
+                  className={`px-3 py-1 rounded ${currentPage === i + 1 ? 'bg-orange-700 text-white' : 'bg-gray-200 text-black hover:bg-orange-300'}`}
+                >
+                  {i + 1}
+                </button>
+              ))}
+              <button
+                onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+                disabled={currentPage === totalPages}
+                className={`px-3 py-1 rounded ${currentPage === totalPages ? 'bg-gray-400 cursor-not-allowed' : 'bg-orange-500 text-white hover:bg-orange-600'}`}
+              >
+                Next
+              </button>
+            </div>
+          )}
         </div>
         <Footer />
       </div>
