@@ -37,18 +37,7 @@ function Footer() {
             T&C
           </Link>
         </div>
-        {/* Contact Info */}
-        <div className="text-sm font-semibold " style={{ }}>
-            Contact: <span className="text-white">+91 1234567899</span>
-          </div>
-        
-
-
-      </div>
-
-      {/* Social Media and Contact */}
-      <div className="flex justify-center items-center w-full max-w-6xl mt-6">
-        {/* Social Icons */}
+        {/* Social Media and Contact*/}
         <div className="flex space-x-4">
           <a href="#" className="text-lg hover:text-black">
             <FaFacebookF />
@@ -60,9 +49,18 @@ function Footer() {
             <FaTwitter />
           </a>
         </div>
+        
+
+
+      </div>
+
+      {/* Social Media and Contact */}
+      {/* <div className="flex justify-center items-center w-full max-w-6xl mt-6"> */}
+        {/* Social Icons */}
+        
 
         
-      </div>
+      {/* </div> */}
     </div>
     </div>
     
