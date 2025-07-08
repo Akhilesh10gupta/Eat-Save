@@ -41,7 +41,7 @@ function HelpSection() {
             { name: "Packed Meals", img: packed },
             { name: "Fresh Produce", img: fresh },
             { name: "Healthy Meals", img: healthy },
-            { name: "Special Meals", img: special },
+            { name: "Raw Foods", img: special },
           ].map((item, index) => (
             <div key={index} className="flex flex-col items-center">
               <div className="w-24 h-24 rounded-full bg-gray-700 flex items-center justify-center overflow-hidden">
