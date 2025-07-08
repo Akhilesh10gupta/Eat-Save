@@ -1,6 +1,7 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import BarChart from '../../statics_components/BarChart';
 import PieChart from '../../statics_components/PieChart';
+import { getFoodWasteSourcesStatistics } from '../../util/api';
 
 // Example/mock data for BarChart
 const barChartData = [
@@ -11,18 +12,29 @@ const barChartData = [
   { year: 2024, hunger: 170, foodWaste: 75, foodWasteUnit: 'Million Tonnes' },
 ];
 
-// Example/mock data for PieChart
-const pieChartData = {
-  year: 2024,
-  sourceBreakdown: {
-    'Overproduction & Overserving': 35,
-    'Improper Storage': 20,
-    'Expiration & Best-Before Dates': 15,
-    'Aesthetic Standards & Rejection': 30,
-  }
-};
-
 function GraphSection() {
+  const [pieChartData, setPieChartData] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const region = 'India';
+  const year = 2024;
+
+  useEffect(() => {
+    const fetchPieData = async () => {
+      setLoading(true);
+      setError(null);
+      try {
+        const data = await getFoodWasteSourcesStatistics({ region, year });
+        setPieChartData(data);
+      } catch (err) {
+        setError('Failed to load pie chart data.');
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchPieData();
+  }, []);
+
   return (
     <div className="bg-transparent text-white flex flex-col items-center py-10 px-5">
       {/* Header Section */}
@@ -42,7 +54,15 @@ function GraphSection() {
           <BarChart data={barChartData} region="India" />
         </div>
         <div className="w-full max-w-md">
-          <PieChart data={pieChartData} region="India" />
+          {loading ? (
+            <div className="flex justify-center items-center h-96">
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-500"></div>
+            </div>
+          ) : error ? (
+            <div className="text-red-400 text-center">{error}</div>
+          ) : pieChartData ? (
+            <PieChart data={pieChartData} region="India" />
+          ) : null}
         </div>
       </div>
 
