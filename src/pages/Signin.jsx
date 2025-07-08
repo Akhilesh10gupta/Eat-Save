@@ -16,6 +16,8 @@ function Signin() {
     password: ''
   });
 
+  const [error, setError] = useState("");
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
@@ -25,14 +27,16 @@ function Signin() {
     e.preventDefault();
     try {
       setLoading(true); // ✅ Show loading
-
+      setError("");
       const res = await loginUser(formData);
-      alert(res.message || 'Login successful!');
       sessionStorage.setItem('token', res.accessToken);
       sessionStorage.setItem('role', res.role);
       navigate('/home2');
     } catch (err) {
-      alert('Login failed: ' + (err.response?.data?.message || err.message));
+      setError(
+        err.response?.data?.message ||
+        "Invalid email or password. Please try again."
+      );
     } finally {
       setLoading(false); // ✅ Hide loading
     }
@@ -96,6 +100,13 @@ function Signin() {
                 Login
               </button>
             </div>
+
+            {/* Error Message */}
+            {error && (
+              <div className="mx-7 mt-3 text-red-600 text-sm text-center font-semibold">
+                {error}
+              </div>
+            )}
 
             {/* 🆕 Sign Up Redirect */}
             <div className="mx-7 mt-4 text-center">

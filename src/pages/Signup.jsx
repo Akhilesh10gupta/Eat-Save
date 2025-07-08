@@ -23,6 +23,8 @@ function Signup() {
   const [isAgreed, setIsAgreed] = useState(false);
   const [showTermsModal, setShowTermsModal] = useState(false);
   const [hasFssai, setHasFssai] = useState(false);
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
 
   useEffect(() => {
     wakeBackend();
@@ -37,6 +39,8 @@ function Signup() {
     e.preventDefault();
     try {
       setLoading(true); // ✅ Show loading
+      setError("");
+      setSuccess("");
 
       const payload = { ...formData };
       if (!hasFssai || formData.role !== 'DONOR') {
@@ -48,8 +52,8 @@ function Signup() {
       sessionStorage.setItem('token', res.accessToken);
       sessionStorage.setItem('role', res.role);
 
-      alert(res.message || 'Registration successful!');
-      navigate('/home2');
+      setSuccess(res.message || 'Registration successful!');
+      setTimeout(() => navigate('/home2'), 1200);
     } catch (err) {
       console.error(err);
       const message =
@@ -57,7 +61,7 @@ function Signup() {
           ? 'This email is already registered.'
           : err.response?.data?.message || err.message;
 
-      alert('Registration failed: ' + message);
+      setError('Registration failed: ' + message);
     } finally {
       setLoading(false); // ✅ Hide loading
     }
@@ -222,16 +226,24 @@ function Signup() {
             <div className="mx-7">
               <button
                 type="submit"
+                className="bg-[#FF7401] text-white w-full py-3 rounded-lg font-semibold hover:bg-orange-600 transition"
                 disabled={!isAgreed}
-                className={`w-full py-3 rounded-lg font-semibold transition ${
-                  isAgreed
-                    ? 'bg-[#FF7401] text-white hover:bg-orange-600'
-                    : 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                }`}
               >
-                Register
+                Sign Up
               </button>
             </div>
+
+            {/* Error/Success Message */}
+            {error && (
+              <div className="mx-7 mt-3 text-red-600 text-sm text-center font-semibold">
+                {error}
+              </div>
+            )}
+            {success && (
+              <div className="mx-7 mt-3 text-green-600 text-sm text-center font-semibold">
+                {success}
+              </div>
+            )}
 
             <div className="mx-7 mt-4 text-center">
               <span className="text-sm text-gray-600">Already have an account? </span>
