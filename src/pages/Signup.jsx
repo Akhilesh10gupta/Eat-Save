@@ -226,7 +226,11 @@ function Signup() {
             <div className="mx-7">
               <button
                 type="submit"
-                className="bg-[#FF7401] text-white w-full py-3 rounded-lg font-semibold hover:bg-orange-600 transition"
+                className={`w-full py-3 rounded-lg font-semibold transition
+                  ${isAgreed
+                    ? 'bg-[#FF7401] text-white hover:bg-orange-600 cursor-pointer'
+                    : 'bg-gray-300 text-gray-500 cursor-not-allowed'}
+                `}
                 disabled={!isAgreed}
               >
                 Sign Up
