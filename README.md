@@ -1,7 +1,7 @@
 
 # 🍽️ ExtraBite – Food Donation Platform
 
-[![Frontend Live](https://img.shields.io/badge/Live%20Frontend-blue?style=flat-square&logo=vercel)](https://extra-bite-frontend.vercel.app)
+[![Frontend Live](https://img.shields.io/badge/Live%20Frontend-blue?style=flat-square&logo=vercel)](https://extrabite.vercel.app)
 [![Backend API Docs](https://img.shields.io/badge/API%20Docs-Swagger-green?style=flat-square&logo=spring)](https://extrabite-backend-2.onrender.com/swagger-ui/index.html#/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
