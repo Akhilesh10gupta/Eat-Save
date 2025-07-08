@@ -283,27 +283,29 @@ const BrowseDonations = () => {
           </div>
           {/* Pagination Controls */}
           {!loading && donations.length > itemsPerPage && (
-            <div className="flex justify-center items-center space-x-2 my-6">
+            <div className="flex justify-center items-center space-x-2 my-6 flex-wrap overflow-x-auto max-w-full px-2">
               <button
                 onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
                 disabled={currentPage === 1}
-                className={`px-3 py-1 rounded ${currentPage === 1 ? 'bg-gray-400 cursor-not-allowed' : 'bg-orange-500 text-white hover:bg-orange-600'}`}
+                className={`px-3 py-1 rounded mb-2 ${currentPage === 1 ? 'bg-gray-400 cursor-not-allowed' : 'bg-orange-500 text-white hover:bg-orange-600'}`}
               >
                 Previous
               </button>
-              {Array.from({ length: totalPages }, (_, i) => (
-                <button
-                  key={i}
-                  onClick={() => setCurrentPage(i + 1)}
-                  className={`px-3 py-1 rounded ${currentPage === i + 1 ? 'bg-orange-700 text-white' : 'bg-gray-200 text-black hover:bg-orange-300'}`}
-                >
-                  {i + 1}
-                </button>
-              ))}
+              <div className="flex flex-row flex-wrap gap-1">
+                {Array.from({ length: totalPages }, (_, i) => (
+                  <button
+                    key={i}
+                    onClick={() => setCurrentPage(i + 1)}
+                    className={`px-3 py-1 rounded mb-2 ${currentPage === i + 1 ? 'bg-orange-700 text-white' : 'bg-gray-200 text-black hover:bg-orange-300'}`}
+                  >
+                    {i + 1}
+                  </button>
+                ))}
+              </div>
               <button
                 onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
                 disabled={currentPage === totalPages}
-                className={`px-3 py-1 rounded ${currentPage === totalPages ? 'bg-gray-400 cursor-not-allowed' : 'bg-orange-500 text-white hover:bg-orange-600'}`}
+                className={`px-3 py-1 rounded mb-2 ${currentPage === totalPages ? 'bg-gray-400 cursor-not-allowed' : 'bg-orange-500 text-white hover:bg-orange-600'}`}
               >
                 Next
               </button>
