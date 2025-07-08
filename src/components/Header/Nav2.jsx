@@ -34,6 +34,9 @@ function Nav2() {
             <Link to="/my-order" className="text-white font-medium text-lg hover:text-orange-400 transition">
               My Orders
             </Link>
+            <Link to="/stats" className="text-white font-medium text-lg hover:text-orange-400 transition">
+              Stats
+            </Link>
             <Link to="/profile">
               <div className="h-8 w-8 bg-orange-500 rounded-full flex items-center justify-center">
                 <span className="text-white text-lg">👤</span>
@@ -41,9 +44,10 @@ function Nav2() {
             </Link>
             <button
               onClick={handleLogout}
-              className="text-white bg-red-600 px-4 py-2 rounded-lg hover:bg-red-700 transition"
+              className="text-white hover:text-red-500 transition"
+              title="Logout"
             >
-              Logout
+              <LogOut size={24} />
             </button>
           </div>
 
@@ -84,6 +88,14 @@ function Nav2() {
           </Link>
 
           <Link
+            to="/stats"
+            className="text-white text-xl font-medium mb-4"
+            onClick={() => setMenuOpen(false)}
+          >
+            Stats
+          </Link>
+
+          <Link
             to="/profile"
             onClick={() => setMenuOpen(false)}
             className="mb-4"
@@ -98,9 +110,9 @@ function Nav2() {
               setMenuOpen(false);
               handleLogout();
             }}
-            className="text-white bg-red-600 px-6 py-2 rounded-lg hover:bg-red-700 transition mt-4"
+            className="text-white bg-red-600 px-6 py-2 rounded-lg hover:bg-red-700 transition mt-4 flex items-center"
           >
-            <LogOut className="inline-block mr-2" /> Logout
+            <LogOut className="mr-2" /> Logout
           </button>
         </div>
       )}

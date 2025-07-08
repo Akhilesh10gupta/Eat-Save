@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import Nav from '../components/Header/Nav';
+import Nav2 from '../components/Header/Nav2';
 import Footer from '../components/Footer/Footer';
 import SummaryCards from '../statics_components/SummaryCards';
 import DailyComparisonCard from '../statics_components/DailyComparisonCard';
@@ -15,6 +16,7 @@ import {
     getDailyComparisonStatistics,
     getFoodWasteSourcesStatistics
 } from '../util/api';
+import { isLoggedIn } from '../util/auth';
 
 const StaticsDisplay = () => {
     // State for filters
@@ -77,7 +79,7 @@ const StaticsDisplay = () => {
     if (loading) {
         return (
             <div className="bg-gradient-to-t from-[#030711] via-[#050D1E] to-[#0A1A3C] min-h-screen flex flex-col">
-                <Nav />
+                {isLoggedIn() ? <Nav2 /> : <Nav />}
                 <div className="flex-grow flex items-center justify-center">
                     <div className="text-center">
                         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-500 mx-auto mb-4"></div>
@@ -91,7 +93,7 @@ const StaticsDisplay = () => {
     if (error) {
         return (
             <div className="bg-gradient-to-t from-[#030711] via-[#050D1E] to-[#0A1A3C] min-h-screen flex flex-col">
-                <Nav />
+                {isLoggedIn() ? <Nav2 /> : <Nav />}
                 <div className="flex-grow flex items-center justify-center">
                     <div className="text-center">
                         <div className="text-red-500 text-6xl mb-4">⚠️</div>
@@ -108,7 +110,7 @@ const StaticsDisplay = () => {
     return (
         <>
             <div className="bg-gradient-to-t from-[#030711] via-[#050D1E] to-[#0A1A3C] min-h-screen flex flex-col">
-                <Nav />
+                {isLoggedIn() ? <Nav2 /> : <Nav />}
 
                 <div className="flex-grow px-6 py-8">
                     <div className="max-w-7xl mx-auto">
