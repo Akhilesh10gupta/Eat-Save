@@ -38,7 +38,7 @@ function HeroSection() {
   };
 
   return (
-    <section className="md:pt-28 pt-15 pb-20 flex flex-col items-center text-center px-4 bg-transparent">
+    <section className="md:pt-28 pt-20 pb-20 flex flex-col items-center text-center px-4 bg-transparent">
       {/* Heading */}
       <h1 className="text-4xl md:text-5xl font-bold text-orange-500">
         Save Food, Save Lives
@@ -60,32 +60,38 @@ function HeroSection() {
           className={`px-4 py-3 rounded-lg border focus:outline-none focus:ring-2 w-80 sm:w-96 bg-transparent text-white placeholder-gray-400 ${extractPinCode(location) ? 'border-gray-500 focus:ring-orange-500' : 'border-red-500 ring-red-500'}`}
           style={{ backgroundColor: "transparent" }}
         />
-        <button className="bg-[#FF7401] text-white px-6 py-3 rounded-lg hover:bg-orange-600 transition" onClick={() => handleProtectedNavigation('/Home2')}>
+        <button
+          className="bg-[#FF7401] text-white px-6 py-3 rounded-lg hover:bg-orange-600 transition"
+          onClick={() => handleProtectedNavigation('/Home2')}
+        >
           <span className="text-lg font-semibold">Get Started</span>
         </button>
       </div>
+
+      {/* Error Messages */}
       {!extractPinCode(location) && !loading && (
         <div className="text-red-500 mt-2 text-sm">A valid 6-digit pin code is required in your address.</div>
       )}
       {errorMsg && <div className="text-red-500 mt-2 text-sm">{errorMsg}</div>}
+
       {/* Buttons Section */}
-      <div className="flex gap-6 mt-8">
+      <div className="flex flex-wrap sm:flex-nowrap gap-4 mt-8 justify-center w-full px-4">
         {/* Request Food */}
         <button
           onClick={() => handleProtectedNavigation("/BrowseDonations")}
-          className="flex items-center gap-2 border-2 border-dashed border-orange-500 px-6 py-3 rounded-lg text-[#FF7401] hover:bg-[#FF7401] hover:text-white transition"
+          className="flex-1 min-w-[140px] max-w-[200px] flex items-center justify-center gap-2 border-2 border-dashed border-orange-500 px-4 py-3 rounded-lg text-[#FF7401] hover:bg-[#FF7401] hover:text-white transition"
         >
           <FaCalendarAlt />
-          <span className="text-lg font-semibold">Request Food</span>
+          <span className="text-sm sm:text-base font-semibold">Request Food</span>
         </button>
 
         {/* Donate Food */}
         <button
           onClick={() => handleProtectedNavigation("/DonateForm")}
-          className="flex items-center gap-2 border-2 border-dashed border-orange-500 px-6 py-3 rounded-lg text-[#FF7401] hover:bg-[#FF7401] hover:text-white transition"
+          className="flex-1 min-w-[140px] max-w-[200px] flex items-center justify-center gap-2 border-2 border-dashed border-orange-500 px-4 py-3 rounded-lg text-[#FF7401] hover:bg-[#FF7401] hover:text-white transition"
         >
           <FaHandHoldingHeart />
-          <span className="text-lg font-semibold">Donate Food</span>
+          <span className="text-sm sm:text-base font-semibold">Donate Food</span>
         </button>
       </div>
     </section>
