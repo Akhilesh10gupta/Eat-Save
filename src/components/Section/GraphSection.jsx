@@ -1,12 +1,26 @@
 import React from "react";
-import { PieChart } from "@mui/x-charts/PieChart";
+import BarChart from '../../statics_components/BarChart';
+import PieChart from '../../statics_components/PieChart';
 
-const pieData = [
-  { label: "Overproduction & Overserving", value: 35, color: "#E67E22" }, // Orange
-  { label: "Improper Storage", value: 20, color: "#2ECC71" }, // Green
-  { label: "Expiration & Best-Before Dates", value: 15, color: "#F4D03F" }, // Yellow
-  { label: "Aesthetic Standards & Rejection", value: 30, color: "#FFFFFF" }, // White
+// Example/mock data for BarChart
+const barChartData = [
+  { year: 2020, hunger: 190, foodWaste: 68, foodWasteUnit: 'Million Tonnes' },
+  { year: 2021, hunger: 185, foodWaste: 70, foodWasteUnit: 'Million Tonnes' },
+  { year: 2022, hunger: 180, foodWaste: 72, foodWasteUnit: 'Million Tonnes' },
+  { year: 2023, hunger: 175, foodWaste: 74, foodWasteUnit: 'Million Tonnes' },
+  { year: 2024, hunger: 170, foodWaste: 75, foodWasteUnit: 'Million Tonnes' },
 ];
+
+// Example/mock data for PieChart
+const pieChartData = {
+  year: 2024,
+  sourceBreakdown: {
+    'Overproduction & Overserving': 35,
+    'Improper Storage': 20,
+    'Expiration & Best-Before Dates': 15,
+    'Aesthetic Standards & Rejection': 30,
+  }
+};
 
 function GraphSection() {
   return (
@@ -22,31 +36,18 @@ function GraphSection() {
         </p>
       </div>
 
-      {/* Pie Chart Section */}
-      <div className="flex flex-col items-center mt-10">
-        <PieChart
-          series={[
-            {
-              data: pieData,
-              innerRadius: 60,
-              outerRadius: 100,
-              paddingAngle: 2,
-              cornerRadius: 5,
-              cx: 150,
-              color: pieData.map((item) => item.color),
-            },
-          ]}
-          width={300}
-          height={300}
-          slotProps={{
-            legend: { hidden: true },
-          }}
-        />
-        <p className=" text-sm">Reasons for Food Waste</p>
+      {/* Charts Section */}
+      <div className="w-full flex flex-col lg:flex-row gap-8 justify-center items-center mt-10">
+        <div className="w-full max-w-xl">
+          <BarChart data={barChartData} region="India" />
+        </div>
+        <div className="w-full max-w-md">
+          <PieChart data={pieChartData} region="India" />
+        </div>
       </div>
 
       {/* Impact Section */}
-      <div className="mt-2 text-center">
+      <div className="mt-8 text-center">
         <h3 className="text-2xl font-semibold text-[#FF7401]">
           Impact In Numbers:
           <span className="text-white text-3xl font-bold mx-2">13342</span>+
