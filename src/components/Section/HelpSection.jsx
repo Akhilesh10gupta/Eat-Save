@@ -1,4 +1,5 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 
 
 import homefood from "../../assets/homefood.jpg";
@@ -17,6 +18,15 @@ import canadaImg from "../../assets/canada.png";
 import indiaImg from "../../assets/india.png";
 
 function HelpSection() {
+  const navigate = useNavigate();
+  const handleMealClick = () => {
+    const token = sessionStorage.getItem('token');
+    if (token) {
+      navigate('/BrowseDonations');
+    } else {
+      navigate('/signin');
+    }
+  };
   return (
     <div className="bg-transparent text-white py-10 px-5 flex flex-col items-center mt-20">
       {/* Header Section */}
@@ -44,7 +54,11 @@ function HelpSection() {
             { name: "Raw Foods", img: special },
           ].map((item, index) => (
             <div key={index} className="flex flex-col items-center">
-              <div className="w-24 h-24 rounded-full bg-gray-700 flex items-center justify-center overflow-hidden">
+              <div
+                className="w-24 h-24 rounded-full bg-gray-700 flex items-center justify-center overflow-hidden cursor-pointer hover:ring-4 hover:ring-orange-400 transition"
+                onClick={handleMealClick}
+                title={sessionStorage.getItem('token') ? 'Browse Donations' : 'Login to Browse Donations'}
+              >
                 <img src={item.img} alt={item.name} className="w-full h-full object-cover rounded-full" />
               </div>
               <p className="mt-2 text-sm">{item.name}</p>
